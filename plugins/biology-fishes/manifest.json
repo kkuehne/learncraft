@@ -1,0 +1,26 @@
+{
+  "name": "biology-fishes",
+  "version": "1.0.0",
+  "title": "Biologie: Fische",
+  "description": "Erkunde die faszinierende Welt der Fische – von der Anatomie bis zur Fortpflanzung",
+  "author": "Karsten Kühne",
+  "targetGrade": 5,
+  "subject": "Biologie",
+  "topics": ["Fisch-Anatomie", "Atmung", "Fortpflanzung", "Lebensräume"],
+  "dependencies": ["core", "ui", "tutor"],
+  "entry": "./index.ts",
+  "routes": [
+    {
+      "path": "/biome/fishes",
+      "component": "BiomePage"
+    },
+    {
+      "path": "/quest/:fishId",
+      "component": "FishQuestPage"
+    }
+  ],
+  "assets": {
+    "images": "./assets/images",
+    "audio": "./assets/audio"
+  }
+}

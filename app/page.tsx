@@ -8,7 +8,7 @@ import { getUserData } from '@/lib/xp'
 import { Check } from 'lucide-react'
 
 export default function Home() {
-  const [user, setUser] = useState({ xp: 0, completedLevels: [] })
+  const [user, setUser] = useState<{ xp: number; completedLevels: ('bronze' | 'silver' | 'gold' | 'boss')[] }>({ xp: 0, completedLevels: [] })
   const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function Home() {
   const bronzeDone = user.completedLevels.includes('bronze')
   const silverDone = user.completedLevels.includes('silver')
   const goldDone = user.completedLevels.includes('gold')
+  const bossUnlocked = bronzeDone && silverDone && goldDone
   
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -63,13 +64,15 @@ export default function Home() {
             <div>
               <p className="font-bold text-amber-800">{professorEich.name}</p>
               <p className="text-gray-700 text-sm">
-                {goldDone 
-                  ? 'Wahnsinn! Du hast alle Levels gemeistert! Du bist ein echter Forellen-Experte! 🏆'
-                  : silverDone
-                    ? professorEich.greetings.gold
-                    : bronzeDone
-                      ? professorEich.greetings.silver
-                      : professorEich.greetings.bronze
+                {goldDone && bossUnlocked
+                  ? professorEich.greetings.boss
+                  : goldDone
+                    ? 'Wahnsinn! Du hast alle Levels gemeistert! Aber wartest du... da ist noch etwas Besonderes... 💎'
+                    : silverDone
+                      ? professorEich.greetings.gold
+                      : bronzeDone
+                        ? professorEich.greetings.silver
+                        : professorEich.greetings.bronze
                 }
               </p>
             </div>
@@ -164,19 +167,63 @@ export default function Home() {
             </div>
           </div>
         )}
+        
+        {/* Boss-Level */}
+        {bossUnlocked ? (
+          <Link href="/quest/forelle/boss">
+            <div className="bg-gradient-to-r from-purple-100 to-purple-50 border-2 border-purple-500 rounded-xl p-6 hover:shadow-xl transition-all cursor-pointer mt-4 animate-pulse">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">💎</span>
+                  <div>
+                    <h3 className="text-xl font-bold text-purple-800">
+                      🔥 BOSS-LEVEL 🔥
+                    </h3>
+                    <p className="text-purple-700">{forelleQuest.levels.boss.title}</p>
+                    <p className="text-sm text-gray-600 mt-1">{forelleQuest.levels.boss.description}</p>
+                  </div>
+                </div>
+                <span className="text-xl font-bold text-purple-600">+{forelleQuest.levels.boss.totalXP} XP</span>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          <div className="bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-300 rounded-xl p-6 opacity-50 mt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🔒</span>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-700">💎 Boss-Level</h3>
+                  <p className="text-gray-600">Die ultimative Challenge</p>
+                  <p className="text-sm text-gray-500 mt-1">Schließe alle 3 Level ab, um den Boss zu entsperren!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
-      {goldDone && (
+      {goldDone && !bossUnlocked && (
         <div className="mt-6 bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-400 rounded-xl p-6 text-center">
           <div className="text-4xl mb-2">🏆</div>
           <h3 className="text-xl font-bold text-green-800 mb-2">Quest abgeschlossen!</h3>
           <p className="text-green-700">Du bist bereit für die Klassenarbeit am 11. Mai! 🎯</p>
+          <p className="text-purple-600 mt-2 text-sm">Aber wartet... da ist noch eine geheime Challenge...</p>
+        </div>
+      )}
+      
+      {bossUnlocked && (
+        <div className="mt-6 bg-gradient-to-r from-purple-100 to-purple-50 border-2 border-purple-500 rounded-xl p-6 text-center">
+          <div className="text-4xl mb-2">👑</div>
+          <h3 className="text-xl font-bold text-purple-800 mb-2">Forellen-MEISTER!</h3>
+          <p className="text-purple-700">Du hast ALLE Level gemeistert! Absolute Legende! 🏆💎🔥</p>
+          <p className="text-gray-600 mt-2">Gesamte XP: {user.xp} / 375</p>
         </div>
       )}
       
       <div className="mt-8 text-center text-sm text-gray-500">
         <p>Klassenarbeit: 11. Mai 2026</p>
-        <p className="mt-1">Gesamte XP: {user.xp} / 225</p>
+        <p className="mt-1">Gesamte XP: {user.xp} / 375</p>
       </div>
     </div>
   )

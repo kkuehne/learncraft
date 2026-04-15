@@ -4,6 +4,7 @@ export const forelleQuest = {
   id: 'forelle',
   name: 'Forelle',
   emoji: '🐟',
+  scientificName: 'Salmo trutta fario',
   description: 'Die Bachforelle - perfekt an ihr Habitat angepasst',
   habitat: 'Sauerstoffreiche, klare Bäche und Flüsse',
   
@@ -108,6 +109,41 @@ export const forelleQuest = {
           xp: 30
         }
       ]
+    },
+    
+    boss: {
+      id: 'boss',
+      name: '💎 Boss',
+      title: 'Die ultimative Challenge',
+      description: 'Meistere das finale Boss-Level und werde zum Forellen-Meister!',
+      totalXP: 150,
+      isBoss: true,
+      tasks: [
+        {
+          id: 'boss1',
+          question: 'Welche spezielle Anpassung ermöglicht der Forelle, in sauerstoffarmem Wasser zu überleben?',
+          options: ['Sie kann Luft atmen', 'Ihre Kiemen haben eine höhere Oberfläche', 'Sie schwimmt nur sehr langsam', 'Sie ändert ihre Hautfarbe'],
+          correctAnswer: 1,
+          hint: 'Mehr Oberfläche = mehr Sauerstoffaufnahme',
+          xp: 50
+        },
+        {
+          id: 'boss2',
+          question: 'Warum kann die Forelle als "Physostomer" Gas direkt aus dem Darm in die Schwimmblase pumpen?',
+          options: ['Um schneller zu schwimmen', 'Um in verschiedenen Tiefen zu bleiben', 'Um lauter zu sein', 'Um besser zu riechen'],
+          correctAnswer: 1,
+          hint: 'Sie reguliert damit ihren Auftrieb!',
+          xp: 50
+        },
+        {
+          id: 'boss3',
+          question: 'Was passiert physiologisch bei der Forelle im Winter, wenn das Wasser eisig kalt wird?',
+          options: ['Sie friert ein', 'Ihr Stoffwechsel wird langsamer', 'Sie wächst schneller', 'Sie wechselt die Farbe'],
+          correctAnswer: 1,
+          hint: 'Kälteres Wasser = langsamerer Stoffwechsel bei Kaltblütern',
+          xp: 50
+        }
+      ]
     }
   }
 }
@@ -119,7 +155,8 @@ export const professorEich = {
   greetings: {
     bronze: 'Willkommen! Ich bin Professor Eich. Gemeinsam erkunden wir die Forelle. Bereit für die erste Aufgabe?',
     silver: 'Großartig! Du kennst die Außenseite. Jetzt schauen wir hinein!',
-    gold: 'Beeindruckend! Du bist bereit für das Gold-Level!'
+    gold: 'Beeindruckend! Du bist bereit für das Gold-Level!',
+    boss: 'WOW! Du hast alle Level gemeistert! Aber bist du bereit für die ULTIMATIVE CHALLENGE? Diese Fragen sind nicht aus dem Buch... sondern aus dem echten Leben eines Forellen-Experten! 💎🔥'
   },
   
   correct: [

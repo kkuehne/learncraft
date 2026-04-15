@@ -5,7 +5,7 @@ const STORAGE_KEY = 'learncraft-user'
 export interface UserData {
   xp: number
   completedTasks: string[]
-  completedLevels: ('bronze' | 'silver' | 'gold')[]
+  completedLevels: ('bronze' | 'silver' | 'gold' | 'boss')[]
 }
 
 export function getUserData(): UserData {
@@ -46,7 +46,7 @@ export function addXP(amount: number, taskId: string): { newXP: number; levelUp:
   }
 }
 
-export function completeLevel(level: 'bronze' | 'silver' | 'gold'): void {
+export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'boss'): void {
   const user = getUserData()
   if (!user.completedLevels.includes(level)) {
     user.completedLevels.push(level)
@@ -54,14 +54,16 @@ export function completeLevel(level: 'bronze' | 'silver' | 'gold'): void {
   }
 }
 
-export function getLevel(xp: number): 'bronze' | 'silver' | 'gold' {
+export function getLevel(xp: number): 'bronze' | 'silver' | 'gold' | 'boss' {
+  if (xp >= 275) return 'boss'
   if (xp >= 125) return 'gold'
   if (xp >= 50) return 'silver'
   return 'bronze'
 }
 
 export function getProgress(xp: number): { current: number; next: number; percent: number } {
-  if (xp >= 125) return { current: xp - 125, next: 100, percent: 100 }
+  if (xp >= 275) return { current: xp - 275, next: 150, percent: 100 }
+  if (xp >= 125) return { current: xp - 125, next: 150, percent: ((xp - 125) / 150) * 100 }
   if (xp >= 50) return { current: xp - 50, next: 75, percent: ((xp - 50) / 75) * 100 }
   return { current: xp, next: 50, percent: (xp / 50) * 100 }
 }

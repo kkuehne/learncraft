@@ -33,7 +33,8 @@ export function XPBar() {
   const levelColors = {
     bronze: 'bg-yellow-700',
     silver: 'bg-gray-400',
-    gold: 'bg-yellow-400'
+    gold: 'bg-yellow-400',
+    boss: 'bg-purple-600'
   }
   
   return (

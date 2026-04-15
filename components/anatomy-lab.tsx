@@ -4,17 +4,73 @@ import { useState, useEffect } from 'react'
 import { forelleAnatomy, professorEich } from '@/lib/data'
 import { addXP } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
-import { Check, X, HelpCircle } from 'lucide-react'
+import { Check, X, HelpCircle, AlertCircle } from 'lucide-react'
 
 interface AnatomyLabProps {
   onComplete: (success: boolean) => void
+}
+
+// Funktion zum Normalisieren des Textes für Vergleich
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[äÄ]/g, 'ae')
+    .replace(/[öÖ]/g, 'oe')
+    .replace(/[üÜ]/g, 'ue')
+    .replace(/[ß]/g, 'ss')
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim()
+}
+
+// Funktion zum Prüfen der Ähnlichkeit (Levenshtein-Distanz könnte man hier verwenden, 
+// aber wir machen es erstmal einfach mit exaktem oder fast-exaktem Match)
+function checkAnswer(userInput: string, correctAnswer: string): { 
+  isCorrect: boolean; 
+  similarity: number;
+  suggestion: string | null 
+} {
+  const normalizedUser = normalizeText(userInput)
+  const normalizedCorrect = normalizeText(correctAnswer)
+  
+  // Exaktes Match
+  if (normalizedUser === normalizedCorrect) {
+    return { isCorrect: true, similarity: 100, suggestion: null }
+  }
+  
+  // Teilweise Übereinstimmung (für Tippfehler)
+  if (normalizedCorrect.includes(normalizedUser) || normalizedUser.includes(normalizedCorrect)) {
+    if (normalizedUser.length >= normalizedCorrect.length * 0.7) {
+      return { isCorrect: true, similarity: 85, suggestion: correctAnswer }
+    }
+  }
+  
+  // Ähnlichkeit berechnen (einfache Version)
+  let matches = 0
+  const maxLen = Math.max(normalizedUser.length, normalizedCorrect.length)
+  for (let i = 0; i < Math.min(normalizedUser.length, normalizedCorrect.length); i++) {
+    if (normalizedUser[i] === normalizedCorrect[i]) matches++
+  }
+  const similarity = (matches / maxLen) * 100
+  
+  return { 
+    isCorrect: false, 
+    similarity, 
+    suggestion: similarity > 50 ? correctAnswer : null 
+  }
 }
 
 export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   const [labeledParts, setLabeledParts] = useState<string[]>([])
   const [selectedPart, setSelectedPart] = useState<string | null>(null)
   const [showHint, setShowHint] = useState<string | null>(null)
-  const [feedback, setFeedback] = useState<{ part: string; correct: boolean } | null>(null)
+  const [feedback, setFeedback] = useState<{ 
+    part: string; 
+    correct: boolean; 
+    message: string;
+    attempts: number;
+  } | null>(null)
+  const [userInput, setUserInput] = useState('')
+  const [attempts, setAttempts] = useState<Record<string, number>>({})
   const [justCompleted, setJustCompleted] = useState(false)
   
   const parts = forelleAnatomy.parts
@@ -34,6 +90,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     if (labeledParts.includes(partId)) return
     
     setSelectedPart(partId)
+    setUserInput('')  // Reset input bei neuem Teil
     setShowHint(null)
     setFeedback(null)
   }
@@ -44,19 +101,57 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     const part = parts.find(p => p.id === partId)
     if (!part) return
     
-    // Simulate correct labeling - in real implementation this could be text input
-    // For MVP: clicking confirms the label
-    const xpResult = addXP(part.xp, `anatomy-${partId}`)
+    const currentAttempts = (attempts[partId] || 0) + 1
+    setAttempts(prev => ({ ...prev, [partId]: currentAttempts }))
     
-    setLabeledParts(prev => [...prev, partId])
-    setSelectedPart(null)
-    setFeedback({ part: partId, correct: true })
+    const result = checkAnswer(userInput, part.correctLabel)
     
-    speak(getRandomResponse(professorEich.correct))
+    if (result.isCorrect) {
+      // Richtig! XP gibt's erst bei korrekter Antwort
+      const xpResult = addXP(part.xp, `anatomy-${partId}`)
+      
+      setLabeledParts(prev => [...prev, partId])
+      setSelectedPart(null)
+      setUserInput('')
+      setFeedback({ 
+        part: partId, 
+        correct: true, 
+        message: `✅ Richtig! "${part.correctLabel}" beschriftet! +${part.xp} XP`,
+        attempts: currentAttempts 
+      })
+      
+      speak(getRandomResponse(professorEich.correct))
+    } else {
+      // Falsch! Kein XP, Hinweis zeigen
+      let message = '❌ Falsch! '
+      
+      if (result.similarity > 70) {
+        message += `Fast richtig! Du meinst bestimmt "${part.correctLabel}"?`
+      } else if (result.similarity > 40) {
+        message += 'Das ist nicht ganz richtig. Schau den Hinweis an!'
+      } else {
+        message += 'Das ist falsch. Lies den Hinweis oder versuche es erneut!'
+      }
+      
+      setFeedback({ 
+        part: partId, 
+        correct: false, 
+        message,
+        attempts: currentAttempts 
+      })
+      
+      // Nach 3 Fehlversuchen automatisch Hinweis anzeigen
+      if (currentAttempts >= 3 && !showHint) {
+        setShowHint(partId)
+        speak(part.hint)
+      }
+    }
     
     setTimeout(() => {
-      setFeedback(null)
-    }, 1500)
+      if (feedback?.correct) {
+        setFeedback(null)
+      }
+    }, 3000)
   }
   
   const showPartHint = (partId: string) => {
@@ -91,8 +186,8 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
             <p className="font-bold text-amber-800">Professor Eich</p>
             <p className="text-gray-700">
               {selectedPart 
-                ? `Klicke auf "${parts.find(p => p.id === selectedPart)?.name} beschriftet" um es zu markieren!`
-                : 'Klicke auf die roten Punkte auf dem Bild, um die Teile der Forelle zu beschriftet!'
+                ? `Teil #${parts.findIndex(p => p.id === selectedPart) + 1} ausgewählt. Gib den korrekten Namen ein!`
+                : 'Klicke auf die nummerierten Punkte auf dem Bild, gib den Namen des Körperteils ein und drücke Enter!'
               }
             </p>
           </div>
@@ -465,66 +560,111 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
         </svg>
       </div>
       
-      {/* Part selection panel */}
+      {/* Part selection panel with TEXT INPUT */}
       {selectedPart && (
         <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-4 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex items-start gap-3">
-            <span className="text-3xl">🏷️</span>
+            <span className="text-3xl">✏️</span>
             <div className="flex-1">
               <p className="font-bold text-blue-800 mb-1">
-                Teil ausgewählt: {parts.find(p => p.id === selectedPart)?.name}
+                Teil #{parts.findIndex(p => p.id === selectedPart) + 1}: {parts.find(p => p.id === selectedPart)?.name}
               </p>
               
+              <p className="text-sm text-blue-600 mb-3">
+                💡 Tipp: Schreibe den korrekten Namen. Achte auf Groß- und Kleinschreibung!
+              </p>
+              
+              {/* Text Input Field */}
+              <div className="mb-3">
+                <input
+                  type="text"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleLabelSubmit(selectedPart)
+                    }
+                  }}
+                  placeholder="Name des Teils eingeben..."
+                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-lg"
+                  autoFocus
+                />
+              </div>
+              
               {showHint === selectedPart && (
-                <p className="text-sm text-blue-600 mb-3 italic">
-                  💡 Hinweis: {parts.find(p => p.id === selectedPart)?.hint}
-                </p>
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 mb-3">
+                  <p className="text-sm text-amber-800 font-bold">💡 Hinweis:</p>
+                  <p className="text-sm text-amber-700">
+                    {parts.find(p => p.id === selectedPart)?.hint}
+                  </p>
+                </div>
+              )}
+              
+              {/* Attempt counter warning */}
+              {(attempts[selectedPart] || 0) > 0 && (
+                <div className="flex items-center gap-2 mb-3 text-amber-600 text-sm">
+                  <AlertCircle size={16} />
+                  <span>Versuch {(attempts[selectedPart] || 0)} / ∞</span>
+                  {(attempts[selectedPart] || 0) >= 3 && (
+                    <span className="text-amber-700 font-bold">- Hinweis verfügbar!</span>
+                  )}
+                </div>
               )}
               
               <div className="flex gap-2">
                 <button 
                   onClick={() => handleLabelSubmit(selectedPart)}
-                  className="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                  disabled={!userInput.trim()}
+                  className="flex-1 bg-green-500 text-white px-4 py-3 rounded-lg font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   <Check size={18} />
-                  {parts.find(p => p.id === selectedPart)?.correctLabel} beschriftet
+                  Überprüfen
                 </button>
                 
                 <button 
                   onClick={() => showPartHint(selectedPart)}
-                  className="bg-amber-400 text-white px-4 py-2 rounded-lg font-bold hover:bg-amber-500 transition-colors"
+                  className="bg-amber-400 text-white px-4 py-3 rounded-lg font-bold hover:bg-amber-500 transition-colors"
                   title="Hinweis anzeigen"
                 >
                   <HelpCircle size={18} />
                 </button>
                 
                 <button 
-                  onClick={() => setSelectedPart(null)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-500 transition-colors"
+                  onClick={() => {
+                    setSelectedPart(null)
+                    setUserInput('')
+                    setShowHint(null)
+                  }}
+                  className="bg-gray-400 text-white px-4 py-3 rounded-lg font-bold hover:bg-gray-500 transition-colors"
                 >
                   <X size={18} />
                 </button>
               </div>
               
-              <p className="text-xs text-gray-500 mt-2">
-                +{parts.find(p => p.id === selectedPart)?.xp} XP für korrekte Beschriftung
+              <p className="text-xs text-gray-500 mt-3">
+                +{parts.find(p => p.id === selectedPart)?.xp} XP bei korrekter Schreibweise
               </p>
             </div>
           </div>
         </div>
       )}
       
-      {/* Feedback */}
+      {/* Feedback with detailed message */}
       {feedback && (
-        <div className={`mt-4 p-4 rounded-lg text-center font-bold animate-in zoom-in
-          ${feedback.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
-        `}>
-          {feedback.correct ? (
-            <>
-              ✅ Richtig beschriftet! +{parts.find(p => p.id === feedback.part)?.xp} XP!
-            </>
-          ) : (
-            <>❌ Versuch es nochmal!</>
+        <div className={`mt-4 p-4 rounded-lg text-center font-bold animate-in zoom-in ${
+          feedback.correct 
+            ? 'bg-green-100 text-green-800 border-2 border-green-300' 
+            : 'bg-red-100 text-red-800 border-2 border-red-300'
+        }`}>
+          <div className="text-lg">
+            {feedback.message}
+          </div>
+          {!feedback.correct && feedback.attempts > 0 && (
+            <div className="text-sm mt-2 font-normal">
+              {feedback.attempts >= 3 
+                ? '👆 Klicke auf das Fragezeichen für einen Hinweis!' 
+                : 'Versuche es nochmal oder hol dir einen Hinweis!'}
+            </div>
           )}
         </div>
       )}

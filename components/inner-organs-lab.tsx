@@ -20,6 +20,12 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
   const [heartBeat, setHeartBeat] = useState(1)
   const [gillCycle, setGillCycle] = useState(0)
   
+  // NEW: Animation toggles for educational animations
+  const [showGasExchange, setShowGasExchange] = useState(false)
+  const [showBloodFlow, setShowBloodFlow] = useState(false)
+  const [showHeartDetail, setShowHeartDetail] = useState(false)
+  const [activeInfoBox, setActiveInfoBox] = useState<string | null>(null)
+  
   const parts = forelleInnerOrgans.parts
   const progress = (labeledParts.length / parts.length) * 100
   
@@ -117,6 +123,75 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
           </div>
         </div>
       </div>
+      
+      {/* Animation Toggle Buttons */}
+      <div className="flex flex-wrap gap-2 mb-4 justify-center">
+        <button
+          onClick={() => {
+            setShowGasExchange(!showGasExchange)
+            setActiveInfoBox(showGasExchange ? null : 'gills')
+          }}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm transition-all ${
+            showGasExchange 
+              ? 'bg-cyan-500 text-white shadow-lg ring-2 ring-cyan-300' 
+              : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
+          }`}
+        >
+          {showGasExchange ? <Pause size={16} /> : <Play size={16} />}
+          💨 Gas-Austausch
+        </button>
+        
+        <button
+          onClick={() => {
+            setShowBloodFlow(!showBloodFlow)
+            setActiveInfoBox(showBloodFlow ? null : 'circulation')
+          }}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm transition-all ${
+            showBloodFlow 
+              ? 'bg-red-500 text-white shadow-lg ring-2 ring-red-300' 
+              : 'bg-red-100 text-red-700 hover:bg-red-200'
+          }`}
+        >
+          {showBloodFlow ? <Pause size={16} /> : <Play size={16} />}
+          💓 Blutkreislauf
+        </button>
+        
+        <button
+          onClick={() => {
+            setShowHeartDetail(!showHeartDetail)
+            setActiveInfoBox(showHeartDetail ? null : 'heart')
+          }}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm transition-all ${
+            showHeartDetail 
+              ? 'bg-rose-500 text-white shadow-lg ring-2 ring-rose-300' 
+              : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+          }`}
+        >
+          {showHeartDetail ? <Pause size={16} /> : <Play size={16} />}
+          🫀 Herz-Details
+        </button>
+      </div>
+      
+      {/* Info Box */}
+      {activeInfoBox && (
+        <div className="mb-4 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-400 rounded-xl animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">💡</span>
+            <div>
+              <p className="font-bold text-amber-800 mb-1">
+                {activeInfoBox === 'gills' && '💨 Sauerstoff-Austausch in den Kiemen'}
+                {activeInfoBox === 'circulation' && '💓 Blutkreislauf der Forelle'}
+                {activeInfoBox === 'heart' && '🫀 Zweikammer-Herz: Vorhof & Kammer'}
+              </p>
+              <p className="text-amber-700 text-sm">
+                {activeInfoBox === 'gills' && 'Sauerstoffreiches Wasser (blau) strömt über die Kiemen. Sauerstoff (O₂) wird ins Blut aufgenommen, Kohlendioxid (CO₂) abgegeben. Das Blut wird dadurch sauerstoffreich (rot).'}
+                {activeInfoBox === 'circulation' && 'Das Herz pumpt das Blut: Kiemen → Körper → Herz. Das Blut fließt durch Arterien (vom Herz weg) und Venen (zum Herz hin).'}
+                {activeInfoBox === 'heart' && 'Das zweikammerige Herz besteht aus Vorhof (empfängt Blut) und Kammer (pumpt Blut). Es schlägt etwa 40-50 mal pro Minute bei einer Forelle.'}
+              </p>
+            </div>
+          </div>        
+        </div>
+      )}
       
       {/* Animated Fish Anatomy */}
       <div className="relative bg-gradient-to-b from-rose-50 via-pink-50 to-rose-100 rounded-xl p-4 mb-4 overflow-hidden">
@@ -286,6 +361,286 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
           />
           {/* Liver lobes */}
           <path d="M 155 75 Q 165 78 175 76" fill="none" stroke="#65a30d" strokeWidth="1" opacity="0.6" />
+          
+          {/* 6. LIVER - Below swim bladder */}
+          <path
+            d="M 140 70 Q 160 65 180 70 Q 200 75 195 85 Q 190 95 170 90 Q 150 85 140 80 Z"
+            fill="url(#liverGradient)"
+            stroke="#3f6212"
+            strokeWidth="1.5"
+            opacity="0.85"
+          />
+          {/* Liver lobes */}
+          <path d="M 155 75 Q 165 78 175 76" fill="none" stroke="#65a30d" strokeWidth="1" opacity="0.6" />
+          
+          {/* ==========================================
+               ANIMATED PARTICLE EFFECTS (ON DEMAND)
+          ========================================== */}
+          
+          {/* 💨 GAS EXCHANGE ANIMATION - Gills */}
+          {showGasExchange && (
+            <g>
+              {/* Incoming water flow - Blue particles (O2 rich) */}
+              <g>
+                {[0, 1, 2, 3, 4].map(i => (
+                  <circle key={`o2-${i}`} r="2" fill="#3b82f6" opacity="0.9">
+                    <animate
+                      attributeName="cx"
+                      values={`${10 + i * 3};${25 + i * 2}`}
+                      dur={`${2 + i * 0.5}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.3}s`}
+                    />
+                    <animate
+                      attributeName="cy"
+                      values={`${40 + i * 3};${45 + i * 2}`}
+                      dur={`${2 + i * 0.5}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.3}s`}
+                    />
+                    <animate
+                      attributeName="fill"
+                      values="#3b82f6;#3b82f6;#ef4444"
+                      keyTimes="0;0.7;1"
+                      dur={`${2 + i * 0.5}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.3}s`}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;1;1;0"
+                      keyTimes="0;0.1;0.9;1"
+                      dur={`${2 + i * 0.5}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.3}s`}
+                    />
+                  </circle>
+                ))}
+              </g>
+              
+              {/* O2 bubbles rising from gills */}
+              <g>
+                {[0, 1, 2].map(i => (
+                  <circle key={`bubble-${i}`} r="1.5" fill="#60a5fa" opacity="0.8">
+                    <animate
+                      attributeName="cx"
+                      values={`${45 + i * 5};${50 + i * 3}`}
+                      dur={`${3 + i * 0.7}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                    <animate
+                      attributeName="cy"
+                      values={`${45 - i * 2};${30 - i * 3}`}
+                      dur={`${3 + i * 0.7}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;0.8;0"
+                      keyTimes="0;0.5;1"
+                      dur={`${3 + i * 0.7}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                    <animate
+                      attributeName="r"
+                      values="1.5;2;2.5"
+                      dur={`${3 + i * 0.7}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                  </circle>
+                ))}
+              </g>
+              
+              {/* Blood vessels showing O2 absorption */}
+              <path
+                d="M 55 50 Q 60 45 65 50 Q 70 55 65 60"
+                fill="none"
+                stroke="url(#bloodO2Gradient)"
+                strokeWidth="2"
+                opacity="0.8"
+              >
+                <animate
+                  attributeName="stroke-dasharray"
+                  values="0,10;5,5;10,0"
+                  dur="2s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </g>
+          )}
+          
+          {/* 💓 BLOOD FLOW ANIMATION - Through body */}
+          {showBloodFlow && (
+            <g>
+              {/* Artery from heart to gills - Red blood cells */}
+              <g>
+                {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+                  <circle key={`artery-${i}`} r="1.8" fill="#dc2626" opacity="0.9">
+                    <animate
+                      attributeName="cx"
+                      values={`${150 + i * 8};${25 + i * 8}`}
+                      dur={`${4 + i * 0.2}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                    <animate
+                      attributeName="cy"
+                      values={`${90 + i * 2};${50 + i * 2}`}
+                      dur={`${4 + i * 0.2}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;1;1;0"
+                      keyTimes="0;0.05;0.95;1"
+                      dur={`${4 + i * 0.2}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.5}s`}
+                    />
+                  </circle>
+                ))}
+              </g>
+              
+              {/* Vein from body back to heart - Dark red cells */}
+              <g>
+                {[0, 1, 2, 3, 4, 5].map(i => (
+                  <circle key={`vein-${i}`} r="1.5" fill="#7f1d1d" opacity="0.85">
+                    <animate
+                      attributeName="cx"
+                      values={`${100 - i * 10};${135 - i * 8}`}
+                      dur={`${5 + i * 0.3}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.7}s`}
+                    />
+                    <animate
+                      attributeName="cy"
+                      values={`${80 - i * 5};${95 - i * 3}`}
+                      dur={`${5 + i * 0.3}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.7}s`}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;0.85;0"
+                      keyTimes="0;0.5;1"
+                      dur={`${5 + i * 0.3}s`}
+                      repeatCount="indefinite"
+                      begin={`${i * 0.7}s`}
+                    />
+                  </circle>
+                ))}
+              </g>
+              
+              {/* Heart pumping effect lines */}
+              <g opacity="0.6">
+                {[0, 1, 2].map(i => (
+                  <path
+                    key={`pulse-${i}`}
+                    d={`M ${135} ${85 + i * 8} Q ${140 + i * 5} ${90 + i * 3} ${155} ${93 + i * 5}`}
+                    fill="none"
+                    stroke="#ef4444"
+                    strokeWidth="1.5"
+                  >
+                    <animate
+                      attributeName="opacity"
+                      values="0;0.8;0"
+                      dur="1.2s"
+                      repeatCount="indefinite"
+                      begin={`${i * 0.4}s`}
+                    />
+                    <animate
+                      attributeName="stroke-width"
+                      values="1.5;2.5;1.5"
+                      dur="1.2s"
+                      repeatCount="indefinite"
+                      begin={`${i * 0.4}s`}
+                    />
+                  </path>
+                ))}
+              </g>
+            </g>
+          )}
+          
+          {/* 🫀 HEART DETAIL ANIMATION */}
+          {showHeartDetail && (
+            <g>
+              {/* Atrium filling */}
+              <ellipse cx="138" cy="85" rx="4" ry="3" fill="#ef4444" opacity="0.5">
+                <animate
+                  attributeName="rx"
+                  values="3;5;3"
+                  dur="1.2s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0.3;0.6;0.3"
+                  dur="1.2s"
+                  repeatCount="indefinite"
+                />
+              </ellipse>
+              
+              {/* Chamber contracting */}
+              <path
+                d="M 142 90 Q 148 105 155 90"
+                fill="none"
+                stroke="#991b1b"
+                strokeWidth="2"
+              >
+                <animate
+                  attributeName="d"
+                  values="M 142 90 Q 148 105 155 90;M 142 88 Q 148 100 155 88;M 142 90 Q 148 105 155 90"
+                  dur="1.2s"
+                  repeatCount="indefinite"
+                />
+              </path>
+              
+              {/* Blood flow arrows */}
+              <g>
+                <path d="M 145 75 L 145 82" stroke="#dc2626" strokeWidth="2" markerEnd="url(#arrowhead)">
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;0"
+                    dur="1.2s"
+                    repeatCount="indefinite"
+                    begin="0.2s"
+                  />
+                </path>
+                
+                <path d="M 158 92 L 168 95" stroke="#dc2626" strokeWidth="2" markerEnd="url(#arrowhead)">
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;0"
+                    dur="1.2s"
+                    repeatCount="indefinite"
+                    begin="0.6s"
+                  />
+                </path>
+              </g>
+              
+              {/* Chamber labels */}
+              <text x="128" y="78" fontSize="6" fill="#7f1d1d" opacity="0.8">Vorhof</text>
+              <text x="148" y="112" fontSize="6" fill="#7f1d1d" opacity="0.8">Kammer</text>
+            </g>
+          )}
+          
+          {/* Gradient for blood O2 exchange */}
+          <defs>
+            <linearGradient id="bloodO2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3b82f6" />
+              <stop offset="50%" stopColor="#8b5cf6" />
+              <stop offset="100%" stopColor="#ef4444" />
+            </linearGradient>
+            
+            <marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+              <polygon points="0 0, 4 2, 0 4" fill="#dc2626" />
+            </marker>
+          </defs>
           
           {/* Labels for blood flow */}
           <g opacity="0.5" fontSize="6" fill="#7f1d1d">

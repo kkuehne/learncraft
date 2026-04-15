@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { XPBar } from '@/components/xp-bar'
 import { forelleQuest, professorEich } from '@/lib/data'
@@ -7,7 +8,27 @@ import { getUserData } from '@/lib/xp'
 import { Check } from 'lucide-react'
 
 export default function Home() {
-  const user = getUserData()
+  const [user, setUser] = useState({ xp: 0, completedLevels: [] })
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setUser(getUserData())
+    setMounted(true)
+  }, [])
+  
+  if (!mounted) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <XPBar />
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">🎓 LearnCraft</h1>
+          <p className="text-gray-600">Lerne alles über die Forelle!</p>
+        </div>
+        <div className="animate-pulse bg-gray-200 rounded-xl h-64"></div>
+      </div>
+    )
+  }
+  
   const bronzeDone = user.completedLevels.includes('bronze')
   const silverDone = user.completedLevels.includes('silver')
   const goldDone = user.completedLevels.includes('gold')

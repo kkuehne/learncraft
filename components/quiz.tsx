@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { professorEich } from '@/lib/data'
 import { addXP } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
@@ -23,6 +23,13 @@ export function Quiz({ task, onComplete }: QuizProps) {
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   
+  // Reset states when task changes
+  useEffect(() => {
+    setSelected(null)
+    setShowResult(false)
+    setIsCorrect(false)
+  }, [task.id])
+  
   const handleAnswer = (index: number) => {
     if (showResult) return
     
@@ -38,7 +45,15 @@ export function Quiz({ task, onComplete }: QuizProps) {
       speak(getRandomResponse(professorEich.wrong))
     }
     
-    setTimeout(() => onComplete(correct), 1500)
+    setTimeout(() => {
+      onComplete(correct)
+      if (!correct) {
+        // Reset bei falscher Antwort für neuen Versuch
+        setSelected(null)
+        setShowResult(false)
+        setIsCorrect(false)
+      }
+    }, 1500)
   }
   
   return (

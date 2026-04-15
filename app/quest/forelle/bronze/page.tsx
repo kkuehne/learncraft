@@ -28,6 +28,7 @@ export default function BronzeLevel() {
         }
       }, 1500)
     }
+    // Bei falscher Antwort: nichts tun, Quiz resetet sich selbst
   }
   
   if (completed) {

@@ -8,7 +8,7 @@ import { getUserData } from '@/lib/xp'
 import { Check } from 'lucide-react'
 
 export default function Home() {
-  const [user, setUser] = useState<{ xp: number; completedLevels: ('bronze' | 'silver' | 'gold' | 'boss')[] }>({ xp: 0, completedLevels: [] })
+  const [user, setUser] = useState<{ xp: number; completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'boss')[] }>({ xp: 0, completedLevels: [] })
   const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function Home() {
   const bronzeDone = user.completedLevels.includes('bronze')
   const silverDone = user.completedLevels.includes('silver')
   const goldDone = user.completedLevels.includes('gold')
+  const anatomyDone = user.completedLevels.includes('anatomy')
   const bossUnlocked = bronzeDone && silverDone && goldDone
   
   return (
@@ -96,6 +97,25 @@ export default function Home() {
                 </div>
               </div>
               <span className="text-xl font-bold text-yellow-600">+{forelleQuest.levels.bronze.totalXP} XP</span>
+            </div>
+          </div>
+        </Link>
+        
+        {/* Anatomie - Immer verfügbar */}
+        <Link href="/quest/forelle/anatomy">
+          <div className={`bg-gradient-to-r from-teal-100 to-cyan-100 border-2 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer ${anatomyDone ? 'border-teal-400 opacity-70' : 'border-teal-400'}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{anatomyDone ? '✅' : '🔬'}</span>
+                <div>
+                  <h3 className={`text-xl font-bold ${anatomyDone ? 'text-teal-700 line-through' : 'text-teal-800'}`}>
+                    {anatomyDone ? 'Anatomie abgeschlossen' : 'Anatomie-Labor'}
+                  </h3>
+                  <p className="text-teal-700">Die Forelle von außen und innen</p>
+                  <p className="text-sm text-gray-600 mt-1">Beschriftet das schematische Bild</p>
+                </div>
+              </div>
+              <span className="text-xl font-bold text-teal-600">+60 XP</span>
             </div>
           </div>
         </Link>
@@ -223,7 +243,7 @@ export default function Home() {
       
       <div className="mt-8 text-center text-sm text-gray-500">
         <p>Klassenarbeit: 11. Mai 2026</p>
-        <p className="mt-1">Gesamte XP: {user.xp} / 375</p>
+        <p className="mt-1">Gesamte XP: {user.xp} / 435</p>
       </div>
     </div>
   )

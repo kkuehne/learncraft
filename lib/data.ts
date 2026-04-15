@@ -1,5 +1,61 @@
 // Forelle-Quest Daten
 
+// Forelle Anatomie-Daten
+export const forelleAnatomy = {
+  id: 'anatomy',
+  name: 'Anatomie',
+  title: 'Die Forelle von außen und innen',
+  description: 'Beschriftet das schematische Bild der Forelle',
+  totalXP: 60,
+  parts: [
+    {
+      id: 'kopf',
+      name: 'Kopf',
+      x: 85,
+      y: 35,
+      correctLabel: 'Kopf mit Maul',
+      hint: 'Vorne befindet sich das Maul zum Fressen',
+      xp: 10
+    },
+    {
+      id: 'kiemen',
+      name: 'Kiemendeckel',
+      x: 65,
+      y: 25,
+      correctLabel: 'Kiemendeckel',
+      hint: 'Hier befinden sich die Kiemen zum Atmen',
+      xp: 15
+    },
+    {
+      id: 'flosse-ruecken',
+      name: 'Rückenflosse',
+      x: 50,
+      y: 15,
+      correctLabel: 'Rückenflosse',
+      hint: 'Die Flosse auf dem Rücken zur Stabilisierung',
+      xp: 10
+    },
+    {
+      id: 'flosse-seite',
+      name: 'Seitenlinie',
+      x: 55,
+      y: 45,
+      correctLabel: 'Seitenlinienorgan',
+      hint: 'Wichtig für die Orientierung im Wasser',
+      xp: 15
+    },
+    {
+      id: 'schwanz',
+      name: 'Schwanzflosse',
+      x: 15,
+      y: 40,
+      correctLabel: 'Schwanzflosse',
+      hint: 'Die große Flosse hinten zum Schwimmen',
+      xp: 10
+    }
+  ]
+}
+
 export const forelleQuest = {
   id: 'forelle',
   name: 'Forelle',

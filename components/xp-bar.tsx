@@ -34,6 +34,7 @@ export function XPBar() {
     bronze: 'bg-yellow-700',
     silver: 'bg-gray-400',
     gold: 'bg-yellow-400',
+    anatomy: 'bg-teal-500',
     boss: 'bg-purple-600'
   }
   

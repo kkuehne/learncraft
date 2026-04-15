@@ -1,6 +1,6 @@
 // Forelle-Quest Daten
 
-// Forelle Anatomie-Daten
+// Forelle Anatomie-Daten (Außen)
 export const forelleAnatomy = {
   id: 'anatomy',
   name: 'Anatomie',
@@ -52,6 +52,77 @@ export const forelleAnatomy = {
       correctLabel: 'Schwanzflosse',
       hint: 'Die große Flosse hinten zum Schwimmen',
       xp: 10
+    }
+  ]
+}
+
+// Innere Organe Daten
+export const forelleInnerOrgans = {
+  id: 'innerorgans',
+  name: 'Innere Organe',
+  title: 'Die Anatomie im Detail',
+  description: 'Beschriftet die inneren Organe der Forelle',
+  totalXP: 80,
+  parts: [
+    {
+      id: 'herz',
+      name: 'Herz',
+      x: 45,
+      y: 55,
+      correctLabel: 'Herz',
+      hint: 'Das zweiseitige Herz pumpt das Blut durch den Körper',
+      xp: 15,
+      animates: true
+    },
+    {
+      id: 'kiemeninnen',
+      name: 'Kiemen',
+      x: 15,
+      y: 35,
+      correctLabel: 'Kiemen',
+      hint: 'Hier findet der Gasaustausch statt - Sauerstoff aufnehmen, CO2 abgeben',
+      xp: 15,
+      animates: true
+    },
+    {
+      id: 'schwimmblase',
+      name: 'Schwimmblase',
+      x: 55,
+      y: 30,
+      correctLabel: 'Schwimmblase',
+      hint: 'Physostom - mit Darm verbunden, reguliert den Auftrieb',
+      xp: 15,
+      animates: false
+    },
+    {
+      id: 'darm',
+      name: 'Darm',
+      x: 65,
+      y: 65,
+      correctLabel: 'Darm',
+      hint: 'Verdauungsweg, führt zum After',
+      xp: 10,
+      animates: false
+    },
+    {
+      id: 'niere',
+      name: 'Niere',
+      x: 70,
+      y: 45,
+      correctLabel: 'Niere',
+      hint: 'Filtration des Blutes, Ausscheidung von Stoffwechselprodukten',
+      xp: 15,
+      animates: false
+    },
+    {
+      id: 'leber',
+      name: 'Leber',
+      x: 60,
+      y: 50,
+      correctLabel: 'Leber',
+      hint: 'Verdauungsorgan, Stoffwechsel, Glykogenspeicher',
+      xp: 10,
+      animates: false
     }
   ]
 }

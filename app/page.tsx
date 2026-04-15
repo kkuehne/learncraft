@@ -8,7 +8,7 @@ import { getUserData } from '@/lib/xp'
 import { Check } from 'lucide-react'
 
 export default function Home() {
-  const [user, setUser] = useState<{ xp: number; completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'boss')[] }>({ xp: 0, completedLevels: [] })
+  const [user, setUser] = useState<{ xp: number; completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss')[] }>({ xp: 0, completedLevels: [] })
   const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
@@ -33,6 +33,7 @@ export default function Home() {
   const silverDone = user.completedLevels.includes('silver')
   const goldDone = user.completedLevels.includes('gold')
   const anatomyDone = user.completedLevels.includes('anatomy')
+  const innerOrgansDone = user.completedLevels.includes('innerorgans')
   const bossUnlocked = bronzeDone && silverDone && goldDone
   
   return (
@@ -116,6 +117,25 @@ export default function Home() {
                 </div>
               </div>
               <span className="text-xl font-bold text-teal-600">+60 XP</span>
+            </div>
+          </div>
+        </Link>
+        
+        {/* Innere Organe - Immer verfügbar */}
+        <Link href="/quest/forelle/inner-organs">
+          <div className={`bg-gradient-to-r from-rose-100 to-pink-100 border-2 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer ${innerOrgansDone ? 'border-rose-400 opacity-70' : 'border-rose-400'}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{innerOrgansDone ? '✅' : '🫀'}</span>
+                <div>
+                  <h3 className={`text-xl font-bold ${innerOrgansDone ? 'text-rose-700 line-through' : 'text-rose-800'}`}>
+                    {innerOrgansDone ? 'Innere Organe abgeschlossen' : 'Innere Organe'}
+                  </h3>
+                  <p className="text-rose-700">Mit Herzschlag & Atmungsanimation</p>
+                  <p className="text-sm text-gray-600 mt-1">6 Organe mit echten Bewegungen</p>
+                </div>
+              </div>
+              <span className="text-xl font-bold text-rose-600">+80 XP</span>
             </div>
           </div>
         </Link>
@@ -243,7 +263,7 @@ export default function Home() {
       
       <div className="mt-8 text-center text-sm text-gray-500">
         <p>Klassenarbeit: 11. Mai 2026</p>
-        <p className="mt-1">Gesamte XP: {user.xp} / 435</p>
+        <p className="mt-1">Gesamte XP: {user.xp} / 515</p>
       </div>
     </div>
   )

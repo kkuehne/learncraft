@@ -35,6 +35,7 @@ export function XPBar() {
     silver: 'bg-gray-400',
     gold: 'bg-yellow-400',
     anatomy: 'bg-teal-500',
+    innerorgans: 'bg-rose-500',
     boss: 'bg-purple-600'
   }
   

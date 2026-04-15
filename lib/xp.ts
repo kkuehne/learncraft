@@ -5,7 +5,7 @@ const STORAGE_KEY = 'learncraft-user'
 export interface UserData {
   xp: number
   completedTasks: string[]
-  completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'boss')[]
+  completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss')[]
 }
 
 export function getUserData(): UserData {
@@ -46,7 +46,7 @@ export function addXP(amount: number, taskId: string): { newXP: number; levelUp:
   }
 }
 
-export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 'boss'): void {
+export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss'): void {
   const user = getUserData()
   if (!user.completedLevels.includes(level)) {
     user.completedLevels.push(level)

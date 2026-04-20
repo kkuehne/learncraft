@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { bossChallenges, evaluateSubmission, compareAttempts, AttemptResult } from '@/lib/boss-challenges'
-import { addXP, completeLevel, getUserData } from '@/lib/xp'
+import { addXP, completeLevel } from '@/lib/xp'
 import { speak } from '@/lib/speech'
 import { 
   ChevronLeft, 
@@ -17,27 +17,36 @@ import {
   TrendingUp,
   BookOpen,
   ArrowRight,
-  Edit3
+  Volume2,
+  Info
 } from 'lucide-react'
 import Link from 'next/link'
 
 export function BossChallengeComponent() {
   const [currentChallenge, setCurrentChallenge] = useState(0)
-  const [currentAttempt, setCurrentAttempt] = useState(1)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [attempts, setAttempts] = useState<Record<string, AttemptResult[]>>({})
   const [showHints, setShowHints] = useState<Record<string, boolean>>({})
+  const [showingSolution, setShowingSolution] = useState(false)
   const [allCompleted, setAllCompleted] = useState(false)
   const [totalScore, setTotalScore] = useState(0)
-  const [isEditing, setIsEditing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const challenge = bossChallenges[currentChallenge]
   const currentAnswer = answers[challenge.id] || ''
   const currentAttempts = attempts[challenge.id] || []
   const lastResult = currentAttempts[currentAttempts.length - 1]
-  const canRetry = currentAttempt < challenge.maxAttempts && (!lastResult || lastResult.score < 85)
-  const hasMoreAttempts = currentAttempt < challenge.maxAttempts
+  const attemptCount = currentAttempts.length
+  const maxAttempts = challenge.maxAttempts
+  const attemptsLeft = maxAttempts - attemptCount
+  
+  // KORREKTE Logik: Weitere Versuche erlaubt, solange:
+  // 1. Noch nicht alle Versuche aufgebraucht
+  // 2. Noch nicht "Exzellent" (85+) erreicht
+  const canRetry = attemptsLeft > 0 && (!lastResult || lastResult.score < 85)
+  
+  // Musterlösung anzeigen nach allen Versuchen oder bei Erfolg
+  const showSolution = lastResult && (lastResult.score >= 85 || attemptsLeft === 0)
 
   // Auto-resize textarea
   useEffect(() => {
@@ -56,7 +65,7 @@ export function BossChallengeComponent() {
     const result = evaluateSubmission(
       currentAnswer, 
       challenge, 
-      currentAttempt,
+      attemptCount + 1,
       currentAttempts
     )
     
@@ -64,8 +73,8 @@ export function BossChallengeComponent() {
     const newAttempts = [...currentAttempts, result]
     setAttempts(prev => ({ ...prev, [challenge.id]: newAttempts }))
     
-    // XP beim ersten Mal
-    if (currentAttempt === 1) {
+    // XP nur beim ersten Versuch
+    if (attemptCount === 0) {
       const xpEarned = Math.round((result.score / 100) * challenge.xp)
       addXP(xpEarned, `boss-${challenge.id}`)
     }
@@ -84,21 +93,16 @@ export function BossChallengeComponent() {
       speak(feedbackMessage)
     }, 300)
 
-    // Update total score
-    setTotalScore(prev => prev + result.score)
-    
-    // Nächster Versuch oder nächste Challenge
-    if (result.score >= 85) {
-      setCurrentAttempt(challenge.maxAttempts) // Bestanden
-    } else {
-      setCurrentAttempt(prev => prev + 1)
-    }
+    // Update total score (nur beste pro Challenge zählt)
+    const bestSoFar = newAttempts.reduce((best, a) => a.score > best.score ? a : best, result)
+    setTotalScore(prev => prev - (currentAttempts.length > 0 ? Math.max(...currentAttempts.map(a => a.score)) : 0) + bestSoFar.score)
   }
 
   const handleRetry = () => {
     if (lastResult) {
-      setIsEditing(true)
-      setCurrentAttempt(currentAttempts.length + 1)
+      // Text vom letzten Versuch laden
+      setAnswers(prev => ({ ...prev, [challenge.id]: lastResult.text }))
+      setShowingSolution(false)
       setTimeout(() => {
         if (textareaRef.current) {
           textareaRef.current.focus()
@@ -111,19 +115,22 @@ export function BossChallengeComponent() {
   const handleNext = () => {
     if (currentChallenge < bossChallenges.length - 1) {
       setCurrentChallenge(prev => prev + 1)
-      setCurrentAttempt(1)
-      setIsEditing(false)
+      setShowingSolution(false)
       setShowHints({})
     } else {
       // Alle Challenges abgeschlossen
-      const averageScore = totalScore / bossChallenges.length
+      const allAttempts = Object.values(attempts).flat()
+      const averageScore = allAttempts.length > 0 
+        ? allAttempts.reduce((sum, a) => sum + a.score, 0) / allAttempts.length 
+        : 0
+      
       if (averageScore >= 50) {
         completeLevel('boss')
         setAllCompleted(true)
-        speak(`🎉 HERZLICHEN GLÜCKWUNSCH! Durchschnittliche Bewertung: ${Math.round(averageScore)} Prozent! Du hast die ultimative Denk-Challenge gemeistert und verdienst den Boss-Experten-Titel!`)
+        speak(`🎉 HERZLICHEN GLÜCKWUNSCH! Du hast die ultimative Denk-Challenge gemeistert und verdienst den Boss-Experten-Titel!`)
       } else {
         setAllCompleted(true)
-        speak(`Du hast alle Challenges durchgearbeitet. Durchschnitt: ${Math.round(averageScore)} Prozent. Für das Boss-Abzeichen brauchst du 50 Prozent. Versuche es gerne nochmal!`)
+        speak(`Du hast alle Challenges durchgearbeitet. Für das Boss-Abzeichen brauchst du 50 Prozent. Versuche es gerne nochmal!`)
       }
     }
   }
@@ -131,8 +138,7 @@ export function BossChallengeComponent() {
   const handlePrevious = () => {
     if (currentChallenge > 0) {
       setCurrentChallenge(prev => prev - 1)
-      setCurrentAttempt(1)
-      setIsEditing(false)
+      setShowingSolution(false)
       setShowHints({})
     }
   }
@@ -143,19 +149,15 @@ export function BossChallengeComponent() {
 
   const handleAnswerChange = (text: string) => {
     setAnswers(prev => ({ ...prev, [challenge.id]: text }))
-    setIsEditing(true)
   }
 
-  // Berechne verfügbare Versuche
-  const attemptsLeft = challenge.maxAttempts - currentAttempt + 1
-  
   // Beste Bewertung für diese Challenge
   const bestResult = currentAttempts.length > 0 
     ? currentAttempts.reduce((best, current) => current.score > best.score ? current : best)
     : null
 
   if (allCompleted) {
-    return <BossCompletionScreen totalScore={totalScore} averageScore={totalScore / bossChallenges.length} attempts={attempts} />
+    return <BossCompletionScreen totalScore={totalScore} attempts={attempts} />
   }
 
   return (
@@ -224,8 +226,20 @@ export function BossChallengeComponent() {
           </div>
 
           {/* Eingabebereich */}
-          {!lastResult || canRetry ? (
+          {(!lastResult || (canRetry && !showingSolution)) ? (
             <div className="space-y-4">
+              {/* Versuch-Anzeige */}
+              {attemptCount > 0 && (
+                <div className="bg-purple-800/50 rounded-xl p-4 flex items-center justify-between">
+                  <span className="text-purple-200">
+                    Versuch {attemptCount + 1} von {maxAttempts}
+                  </span>
+                  {attemptsLeft === 1 && (
+                    <span className="text-amber-400 text-sm">Letzte Chance!</span>
+                  )}
+                </div>
+              )}
+
               <div className="relative">
                 <textarea
                   ref={textareaRef}
@@ -233,7 +247,6 @@ export function BossChallengeComponent() {
                   onChange={(e) => handleAnswerChange(e.target.value)}
                   placeholder={`Schreibe hier deine Antwort... (mindestens ${challenge.minLength} Zeichen)`}
                   className="w-full bg-slate-800/80 rounded-2xl p-6 text-white placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[200px]"
-                  disabled={!!lastResult && !canRetry}
                 />
                 <div className="absolute bottom-4 right-4 text-slate-400 text-sm">
                   {currentAnswer.length} Zeichen
@@ -262,20 +275,12 @@ export function BossChallengeComponent() {
               {/* Submit Button */}
               <button
                 onClick={handleSubmit}
-                disabled={currentAnswer.length < 100 || (!!lastResult && !canRetry)}
+                disabled={currentAnswer.length < 100}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <Send size={20} />
-                {currentAttempt === 1 ? 'Antwort einreichen' : `Verbesserter Versuch ${currentAttempt}/${challenge.maxAttempts}`}
+                {attemptCount === 0 ? 'Antwort einreichen' : `Verbesserter Versuch ${attemptCount + 1}/${maxAttempts}`}
               </button>
-
-              {/* Versuche-Anzeige */}
-              <div className="flex items-center justify-center gap-2 text-purple-200">
-                <span>Versuch {currentAttempt} von {challenge.maxAttempts}</span>
-                {attemptsLeft <= 2 && attemptsLeft > 0 && (
-                  <span className="text-amber-400">(noch {attemptsLeft} {attemptsLeft === 1 ? 'Versuch' : 'Versuche'} übrig)</span>
-                )}
-              </div>
             </div>
           ) : null}
 
@@ -331,27 +336,53 @@ export function BossChallengeComponent() {
                 </div>
               )}
 
-              {/* Weiter-Buttons */}
-              <div className="flex gap-4 mt-6">
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4 mt-6">
                 {canRetry && (
                   <button
                     onClick={handleRetry}
-                    className="flex-1 flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold transition-colors"
+                    className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold transition-colors"
                   >
                     <RotateCcw size={20} />
-                    Text verbessern
+                    Weiteren Versuch starten
+                    <span className="text-amber-200 text-sm">({attemptsLeft} übrig)</span>
                   </button>
                 )}
+                
                 {(lastResult.score >= 85 || !canRetry) && (
                   <button
                     onClick={handleNext}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 rounded-xl font-bold transition-all"
+                    className="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 rounded-xl font-bold transition-all"
                   >
                     <ArrowRight size={20} />
-                    {currentChallenge < bossChallenges.length - 1 ? 'Nächste Challenge' : 'Abschluss'}
+                    {currentChallenge < bossChallenges.length - 1 ? 'Nächste Challenge' : 'Zum Abschluss'}
                   </button>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Musterlösung */}
+          {showSolution && (
+            <div className="mt-6 bg-gradient-to-br from-emerald-900/50 to-teal-900/50 rounded-2xl p-6 border border-emerald-500/50">
+              <div className="flex items-center gap-3 mb-4">
+                <Info className="text-emerald-400" size={24} />
+                <h3 className="text-xl font-bold text-emerald-400">
+                  Musterlösung: {challenge.title}
+                </h3>
+              </div>
+              
+              <div className="bg-emerald-950/50 rounded-xl p-4 mb-4">
+                <SolutionContent challengeId={challenge.id} />
+              </div>
+
+              <button
+                onClick={() => speak(getSolutionText(challenge.id))}
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-colors"
+              >
+                <Volume2 size={20} />
+                Musterlösung anhören
+              </button>
             </div>
           )}
 
@@ -374,16 +405,72 @@ export function BossChallengeComponent() {
   )
 }
 
+// Musterlösungen für jede Challenge
+const solutions: Record<string, { title: string; points: string[] }> = {
+  bioindikator: {
+    title: 'Die Forelle als Bioindikator - Musterlösung',
+    points: [
+      'Das Gegenstromprinzip in den Kiemen ermöglicht einen extrem effizienten Sauerstoffaustausch mit über 80% Wirkungsgrad. Blut und Wasser fließen dabei in entgegengesetzte Richtungen, was einen maximalen Konzentrationsgradienten aufrechterhält.',
+      'Diese hohe Effizienz hat aber einen Preis: Die Forelle braucht viel Energie für ihre Atmung und hat einen schnellen Stoffwechsel. Sie benötigt ständig viel Sauerstoff, auch im Ruhezustand.',
+      'Andere Fischarten wie der Karpfen können bei Sauerstoffmangel auf Dämmerschlaf (Winterstarre) umschalten oder sogar Luft atmen. Die Forelle kann das nicht – sie ist auf ständig sauerstoffreiches Wasser angewiesen.',
+      'Deshalb verschwindet die Forelle als erste Fischart bei Gewässerverschmutzung. Sie ist wie ein empfindliches Messgerät für Wasserqualität – ein wahrer Bioindikator!'
+    ]
+  },
+  'wild-vs-zucht': {
+    title: 'Wild vs. Zucht - Musterlösung',
+    points: [
+      'Körperlich unterscheiden sich Zuchtforellen durch größere Schwimmblasen (keine Strömung nötig), dickere Körperform (mehr Fett) und manchmal unterschiedliche Färbungen.',
+      'Im Verhalten sind Wildforellen scheuer, schneller in der Flucht und präziser in der Laichzeit. Zuchtforellen gewöhnen sich an Menschen und haben weniger Fluchtinstinkt.',
+      'Wenn Zuchtforellen in Wildbäche entlassen werden, konkurrieren sie mit Wildforellen um Nahrung und Laichplätze. Durch Vermischung werden die Wildgene verdünnt.',
+      'Die Wildpopulation verliert anpassungsfähige Gene. Ethisch ist fragwürdig, ob man Natur durch künstliche Besatzmaßnahmen "verbessern" sollte. Der Naturschutz setzt auf Schutz der Wildbestände statt Zuchteinsatz.'
+    ]
+  },
+  klimawandel: {
+    title: 'Klimawandel und Forellen - Musterlösung',
+    points: [
+      'Bei höheren Temperaturen löst Wasser weniger Sauerstoff. Gleichzeitig steigt der Energiebedarf der Forelle exponentiell. Sie braucht mehr Sauerstoff, aber es gibt weniger im Wasser!',
+      'Forellen können in kältere Bereiche wandern (Verhaltensthermoregulation) oder in höhere Gebirgslagen ausweichen. Aber irgendwann gibt es keine höheren Berge mehr.',
+      'Die "Gipfelfalle" bedeutet: Gebirgsarten können nicht höher wandern als der Berggipfel. Sie sind gefangen und können dem Klimawandel nicht entkommen.',
+      'Evolutionäre Anpassung braucht Tausende von Jahren. Der Klimawandel passiert in Jahrzehnten. Die Forelle hat keine Zeit, sich anzupassen. In 50 Jahren könnte sie in vielen Regionen verschwunden sein.'
+    ]
+  }
+}
+
+function SolutionContent({ challengeId }: { challengeId: string }) {
+  const solution = solutions[challengeId]
+  if (!solution) return null
+
+  return (
+    <div className="space-y-3">
+      <h4 className="text-emerald-300 font-bold text-lg mb-2">{solution.title}</h4>
+      {solution.points.map((point, idx) => (
+        <div key={idx} className="flex gap-3 text-emerald-100">
+          <span className="text-emerald-400 font-bold flex-shrink-0">{idx + 1}.</span>
+          <p className="text-sm leading-relaxed">{point}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function getSolutionText(challengeId: string): string {
+  const solution = solutions[challengeId]
+  if (!solution) return ''
+  return `${solution.title}. ${solution.points.join(' ')}`
+}
+
 // Abschluss-Screen
 function BossCompletionScreen({ 
   totalScore, 
-  averageScore,
   attempts 
 }: { 
   totalScore: number
-  averageScore: number
   attempts: Record<string, AttemptResult[]>
 }) {
+  const allAttempts = Object.values(attempts).flat()
+  const averageScore = allAttempts.length > 0 
+    ? allAttempts.reduce((sum, a) => sum + a.score, 0) / allAttempts.length 
+    : 0
   const passed = averageScore >= 50
   
   return (

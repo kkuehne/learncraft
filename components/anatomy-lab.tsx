@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { forelleAnatomy, professorEich } from '@/lib/data'
-import { addXP } from '@/lib/xp'
+import { addXP, getLabeledParts, saveLabeledParts } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, AlertCircle } from 'lucide-react'
 
@@ -67,6 +67,12 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   const [attempts, setAttempts] = useState<Record<string, number>>({})
   const [justCompleted, setJustCompleted] = useState(false)
   
+  // Load saved progress on mount
+  useEffect(() => {
+    const savedParts = getLabeledParts('anatomy')
+    setLabeledParts(savedParts)
+  }, [])
+  
   const parts = forelleAnatomy.parts
   const progress = (labeledParts.length / parts.length) * 100
   
@@ -101,7 +107,9 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     
     if (result.isCorrect) {
       addXP(part.xp, `anatomy-${partId}`)
-      setLabeledParts(prev => [...prev, partId])
+      const newLabeledParts = [...labeledParts, partId]
+      setLabeledParts(newLabeledParts)
+      saveLabeledParts('anatomy', newLabeledParts) // Save to localStorage
       setSelectedPart(null)
       setUserInput('')
       setFeedback({ 

@@ -6,11 +6,15 @@ export interface UserData {
   xp: number
   completedTasks: string[]
   completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss')[]
+  labeledParts?: {
+    anatomy?: string[]
+    innerOrgans?: string[]
+  }
 }
 
 export function getUserData(): UserData {
   if (typeof window === 'undefined') {
-    return { xp: 0, completedTasks: [], completedLevels: [] }
+    return { xp: 0, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
   }
   
   const stored = localStorage.getItem(STORAGE_KEY)
@@ -18,7 +22,7 @@ export function getUserData(): UserData {
     return JSON.parse(stored)
   }
   
-  return { xp: 0, completedTasks: [], completedLevels: [] }
+  return { xp: 0, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
 }
 
 export function saveUserData(data: UserData): void {
@@ -52,6 +56,22 @@ export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 
     user.completedLevels.push(level)
     saveUserData(user)
   }
+}
+
+// Save labeled parts for anatomy
+export function saveLabeledParts(type: 'anatomy' | 'innerOrgans', parts: string[]): void {
+  const user = getUserData()
+  if (!user.labeledParts) {
+    user.labeledParts = { anatomy: [], innerOrgans: [] }
+  }
+  user.labeledParts[type] = parts
+  saveUserData(user)
+}
+
+// Get labeled parts
+export function getLabeledParts(type: 'anatomy' | 'innerOrgans'): string[] {
+  const user = getUserData()
+  return user.labeledParts?.[type] || []
 }
 
 export function getLevel(xp: number): 'bronze' | 'silver' | 'gold' | 'boss' {

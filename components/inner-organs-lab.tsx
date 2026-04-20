@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { forelleInnerOrgans, professorEich } from '@/lib/data'
-import { addXP } from '@/lib/xp'
+import { addXP, getLabeledParts, saveLabeledParts } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, Play, Pause } from 'lucide-react'
 
@@ -19,6 +19,12 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
   const [animationEnabled, setAnimationEnabled] = useState(true)
   const [heartBeat, setHeartBeat] = useState(1)
   const [gillCycle, setGillCycle] = useState(0)
+  
+  // Load saved progress on mount
+  useEffect(() => {
+    const savedParts = getLabeledParts('innerOrgans')
+    setLabeledParts(savedParts)
+  }, [])
   
   // NEW: Animation toggles for educational animations
   const [showGasExchange, setShowGasExchange] = useState(false)
@@ -70,7 +76,9 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
     if (!part) return
     
     addXP(part.xp, `innerorgans-${partId}`)
-    setLabeledParts(prev => [...prev, partId])
+    const newLabeledParts = [...labeledParts, partId]
+    setLabeledParts(newLabeledParts)
+    saveLabeledParts('innerOrgans', newLabeledParts) // Save to localStorage
     setSelectedPart(null)
     setFeedback({ part: partId, correct: true })
     speak(getRandomResponse(professorEich.correct))

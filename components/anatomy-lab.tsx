@@ -239,9 +239,27 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
             {/* Afterflosse */}
             <path d="M 100 62 C 105 70 112 67 115 62 L 110 58 Z" fill="url(#finGradient)" stroke="#3f6212" strokeWidth="0.4" opacity="0.9" />
             
-            {/* Körper - zylindrisch, stromlinienförmig */}
-            <path d="M 55 42 C 55 25, 90 18, 130 16 C 180 14, 220 22, 245 35 C 255 42, 255 52, 245 58 C 220 68, 180 72, 130 70 C 90 68, 55 65, 55 48 Z" fill="url(#troutBody)" stroke="#3f6212" strokeWidth="0.5" />
-            <path d="M 55 42 C 55 25, 90 18, 130 16 C 180 14, 220 22, 245 35 C 255 42, 255 52, 245 58 C 220 68, 180 72, 130 70 C 90 68, 55 65, 55 48 Z" fill="url(#troutScales)" opacity="0.35" />
+            {/* Körper - durchgehend von Kopf bis Schwanz */}
+            <path 
+              d="M 55 42 
+                 C 55 25, 90 18, 130 16 
+                 C 170 14, 210 20, 235 30 
+                 C 250 34, 275 32, 282 38 
+                 C 285 42, 283 48, 278 52 
+                 C 272 56, 260 54, 250 50
+                 C 245 55, 255 58, 245 58 
+                 C 220 68, 180 72, 130 70 
+                 C 90 68, 55 65, 55 48 
+                 Z" 
+              fill="url(#troutBody)" 
+              stroke="#3f6212" 
+              strokeWidth="0.5" 
+            />
+            <path 
+              d="M 55 42 C 55 25, 90 18, 130 16 C 170 14, 210 20, 235 30 C 250 34, 275 32, 282 38 C 285 42, 283 48, 278 52 C 272 56, 260 54, 250 50 C 245 55, 255 58, 245 58 C 220 68, 180 72, 130 70 C 90 68, 55 65, 55 48 Z" 
+              fill="url(#troutScales)" 
+              opacity="0.35" 
+            />
             
             {/* Schwarze Flecken (parr marks) */}
             <g fill="#1a202c" opacity="0.65">
@@ -289,14 +307,23 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
               <path d="M 205 60 L 213 64" fill="none" stroke="#3f6212" strokeWidth="0.25" />
             </g>
             
-            {/* Kopf - spitz, stromlinienförmig mit deutlichem Maul */}
-            <path d="M 245 40 C 260 34, 275 32, 282 38 C 285 42, 283 48, 278 52 C 272 56, 262 54, 255 52 C 250 50, 248 45, 245 40 Z" fill="url(#troutBody)" stroke="#3f6212" strokeWidth="0.5" />
+            {/* Maul - als Einschnitt in den durchgehenden Körper */}
+            <path 
+              d="M 278 40 C 282 40, 284 42, 284 45 C 284 48, 282 50, 278 50" 
+              fill="none" 
+              stroke="#1a202c" 
+              strokeWidth="1.2" 
+              strokeLinecap="round" 
+            />
             
-            {/* Maul - terminal und deutlich */}
-            <path d="M 278 40 C 282 40, 284 42, 284 45 C 284 48, 282 50, 278 50" fill="none" stroke="#1a202c" strokeWidth="1" strokeLinecap="round" />
-            
-            {/* Oberlippe leicht vorgewölbt */}
-            <path d="M 275 38 C 280 36, 283 38, 282 40" fill="none" stroke="#2d3748" strokeWidth="0.5" opacity="0.6" />
+            {/* Oberlippe */}
+            <path 
+              d="M 275 38 C 280 36, 283 38, 282 40" 
+              fill="none" 
+              stroke="#2d3748" 
+              strokeWidth="0.6" 
+              opacity="0.7" 
+            />
             
             {/* Auge - positioniert nach hinten versetzt */}
             <g>

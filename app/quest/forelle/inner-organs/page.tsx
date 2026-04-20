@@ -17,11 +17,17 @@ export default function InnerOrgansLevel() {
   const [alreadyCelebrated, setAlreadyCelebrated] = useState(false)
   const level = forelleInnerOrgans
 
-  // Check completion status on mount
+  // Check completion status on mount - including if already done
   useEffect(() => {
     const userData = getUserData()
+    const isInnerDone = userData.completedLevels.includes('innerorgans')
     setAnatomyComplete(userData.completedLevels.includes('anatomy'))
     setAlreadyCelebrated(hasSeenMasterCelebration())
+    
+    // If already completed, set completed state to prevent re-trigger
+    if (isInnerDone) {
+      setCompleted(true)
+    }
   }, [])
   
   const handleComplete = (success: boolean) => {

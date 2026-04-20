@@ -18,12 +18,16 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
   const [showReward, setShowReward] = useState(false)
 
   const markAsRead = (sectionId: string) => {
+    if (sectionId === 'basis') {
+      // Basis-Daten sind immer sichtbar, zählen aber nicht für XP
+      return
+    }
     if (!readSections.has(sectionId)) {
       const newRead = new Set(readSections)
       newRead.add(sectionId)
       setReadSections(newRead)
       
-      // Check if at least 3 sections read
+      // Check if at least 3 sections read (exklusive basis)
       if (newRead.size >= 3 && !completed) {
         setCompleted(true)
         setShowReward(true)
@@ -33,12 +37,11 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
   }
 
   const sections = [
-    { id: 'basis', data: forellenSteckbrief.basisDaten, type: 'basis' },
-    { id: 'lebensraum', data: forellenSteckbrief.lebensraum, type: 'list' },
-    { id: 'nahrung', data: forellenSteckbrief.nahrung, type: 'list' },
-    { id: 'fortpflanzung', data: forellenSteckbrief.fortPflanzung, type: 'list' },
-    { id: 'besonderheiten', data: forellenSteckbrief.besonderheiten, type: 'list' },
-    { id: 'bedrohungen', data: forellenSteckbrief.bedrohungen, type: 'list' },
+    { id: 'lebensraum', data: forellenSteckbrief.lebensraum },
+    { id: 'nahrung', data: forellenSteckbrief.nahrung },
+    { id: 'fortpflanzung', data: forellenSteckbrief.fortPflanzung },
+    { id: 'besonderheiten', data: forellenSteckbrief.besonderheiten },
+    { id: 'bedrohungen', data: forellenSteckbrief.bedrohungen },
   ]
 
   return (
@@ -55,7 +58,7 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
         
         <div className="mt-4 flex items-center gap-4 text-sm">
           <div className="bg-white/20 rounded-full px-4 py-2">
-            Gelesen: {readSections.size} / 6 Abschnitte
+            Gelesen: {readSections.size} / 5 Abschnitte
           </div>
           {completed && (
             <div className="bg-green-400 text-teal-900 rounded-full px-4 py-2 font-bold">
@@ -70,7 +73,6 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl shadow-lg p-6"
-        onClick={() => markAsRead('basis')}
       >
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-teal-100 p-3 rounded-xl">
@@ -80,10 +82,6 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
             <h3 className="text-xl font-bold text-gray-800">{forellenSteckbrief.basisDaten.name}</h3>
             <p className="text-gray-500 italic">{forellenSteckbrief.basisDaten.wissenschaftlicherName}</p>
           </div>
-          
-          {readSections.has('basis') && (
-            <CheckCircle className="w-6 h-6 text-green-500 ml-auto" />
-          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -123,7 +121,7 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
 
       {/* Info Sections */}
       <div className="grid md:grid-cols-2 gap-4">
-        {sections.filter(s => s.type === 'list').map((section, idx) => (
+        {sections.map((section, idx) => (
           <motion.div
             key={section.id}
             initial={{ opacity: 0, y: 20 }}

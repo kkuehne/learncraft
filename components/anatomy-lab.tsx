@@ -496,7 +496,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
           className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl font-bold hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
         >
           <Info size={20} />
-          🫁 Gegenstromprinzip
+          Gegenstromprinzip
         </button>
         
         <button
@@ -504,7 +504,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
           className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:from-violet-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
         >
           <Microscope size={20} />
-          🔬 Detaillierte Anatomie
+          Detaillierte Anatomie
         </button>
       </div>
 

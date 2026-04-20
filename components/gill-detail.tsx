@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Play, Pause, Volume2 } from 'lucide-react'
-import { speak } from '@/lib/speech'
+import { speak, stopSpeaking } from '@/lib/speech'
 
 interface GillDetailProps {
   isOpen: boolean
@@ -24,6 +24,11 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
     }
   }, [isOpen, audioPlayed])
 
+  const handleClose = () => {
+    stopSpeaking()
+    onClose()
+  }
+
   if (!isOpen) return null
 
   return (
@@ -35,7 +40,7 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
             Kiemen-Detail: Gegenstromprinzip
           </h2>
           <button 
-            onClick={onClose} 
+            onClick={handleClose} 
             className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
           >
             <X size={28} />

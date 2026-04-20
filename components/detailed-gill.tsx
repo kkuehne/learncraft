@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Volume2 } from 'lucide-react'
-import { speak } from '@/lib/speech'
+import { speak, stopSpeaking } from '@/lib/speech'
 import { professorEich } from '@/lib/data'
 
 interface DetailedGillProps {
@@ -79,7 +79,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
             Detaillierte Kiemenanatomie
           </h2>
           <button 
-            onClick={onClose} 
+            onClick={() => { stopSpeaking(); onClose(); }} 
             className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
           >
             <X size={28} />

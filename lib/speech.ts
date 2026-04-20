@@ -18,6 +18,12 @@ export function speak(text: string): void {
   window.speechSynthesis.speak(utterance)
 }
 
+export function stopSpeaking(): void {
+  if (typeof window === 'undefined') return
+  if (!('speechSynthesis' in window)) return
+  window.speechSynthesis.cancel()
+}
+
 export function getRandomResponse(responses: string[]): string {
   return responses[Math.floor(Math.random() * responses.length)]
 }

@@ -18,12 +18,13 @@ export const learningPath = {
       id: 'anatomy-lab',
       name: 'Anatomie Lab',
       emoji: '🔬',
-      description: 'Alle Animationen: äußere Anatomie, innere Organe, Kiemen-Details',
+      description: 'Äußere Form + innere Organe. Erst beide fertig = Meister-Feier!',
       category: 'praxis',
       requiredXP: 0,
       totalXP: 170,
       locked: false,
-      color: '#3b82f6'
+      color: '#3b82f6',
+      route: '/quest/forelle/anatomy-lab'
     },
     {
       id: 'quiz',

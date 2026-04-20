@@ -150,8 +150,8 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   // Hotspot-Positionen basierend auf neuer Forellen-Zeichnung
   const getHotspotPos = (partId: string) => {
     const positions: Record<string, {x: number, y: number}> = {
-      'kopf': { x: 268, y: 40 },
-      'kiemen': { x: 215, y: 42 },
+      'kopf': { x: 275, y: 42 },  // Maul-Bereich
+      'kiemen': { x: 218, y: 40 }, // Kiemendeckel (weiter vorne)
       'flosse-ruecken': { x: 135, y: 16 },
       'flosse-seite': { x: 145, y: 45 },
       'schwanz': { x: 35, y: 48 }
@@ -289,20 +289,25 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
               <path d="M 205 60 L 213 64" fill="none" stroke="#3f6212" strokeWidth="0.25" />
             </g>
             
-            {/* Kopf - kleiner im Verhältnis zum Körper */}
-            <path d="M 245 38 C 265 28 275 32 278 38 C 280 42 278 46 275 50 C 270 56 260 54 255 52" fill="url(#troutBody)" stroke="#3f6212" strokeWidth="0.5" />
-            <path d="M 270 42 C 274 42 276 44 276 46" fill="none" stroke="#1a202c" strokeWidth="0.8" strokeLinecap="round" />
+            {/* Kopf - spitz, stromlinienförmig mit deutlichem Maul */}
+            <path d="M 245 40 C 260 34, 275 32, 282 38 C 285 42, 283 48, 278 52 C 272 56, 262 54, 255 52 C 250 50, 248 45, 245 40 Z" fill="url(#troutBody)" stroke="#3f6212" strokeWidth="0.5" />
             
-            {/* Auge */}
+            {/* Maul - terminal und deutlich */}
+            <path d="M 278 40 C 282 40, 284 42, 284 45 C 284 48, 282 50, 278 50" fill="none" stroke="#1a202c" strokeWidth="1" strokeLinecap="round" />
+            
+            {/* Oberlippe leicht vorgewölbt */}
+            <path d="M 275 38 C 280 36, 283 38, 282 40" fill="none" stroke="#2d3748" strokeWidth="0.5" opacity="0.6" />
+            
+            {/* Auge - positioniert nach hinten versetzt */}
             <g>
-              <ellipse cx="225" cy="32" rx="5" ry="6" fill="#fef3c7" stroke="#1a202c" strokeWidth="0.5" />
-              <circle cx="227" cy="32" r="3.2" fill="#1a202c" />
-              <circle cx="228" cy="31" r="1" fill="white" />
+              <ellipse cx="230" cy="34" rx="4" ry="5" fill="#fef3c7" stroke="#1a202c" strokeWidth="0.5" />
+              <circle cx="232" cy="34" r="2.8" fill="#1a202c" />
+              <circle cx="233" cy="33" r="0.9" fill="white" />
             </g>
             
-            {/* Kiemendeckel */}
-            <path d="M 205 28 C 225 24 230 38 226 50 C 220 58 205 54 198 45 C 192 36 198 30 205 28 Z" fill="url(#gillGradient)" stroke="#3f6212" strokeWidth="0.5" />
-            <path d="M 208 35 C 210 40 208 46" fill="none" stroke="#5c2810" strokeWidth="0.4" strokeLinecap="round" />
+            {/* Kiemendeckel - größer und deutlicher */}
+            <path d="M 210 28 C 230 24, 235 38, 231 50 C 225 58, 210 54, 203 45 C 197 36, 203 30, 210 28 Z" fill="url(#gillGradient)" stroke="#3f6212" strokeWidth="0.5" />
+            <path d="M 213 35 C 216 40, 214 46, 211 48" fill="none" stroke="#5c2810" strokeWidth="0.5" strokeLinecap="round" />
             
             {/* Seitenlinie */}
             <path d="M 55 45 C 90 43 130 44 170 45 C 210 46 240 42 255 40" fill="none" stroke="#faf5eb" strokeWidth="1" opacity="0.8" strokeLinecap="round" />

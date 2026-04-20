@@ -77,8 +77,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
                   <path d="M0,0 L0,8 L12,4 z" fill="#dc2626"/>
                 </marker>
-                <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"
-003e
+                <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
                   <path d="M0,0 L0,8 L12,4 z" fill="#16a34a"/>
                 </marker>
               </defs>

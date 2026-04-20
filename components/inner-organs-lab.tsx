@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { forelleInnerOrgans, professorEich } from '@/lib/data'
-import { addXP, getLabeledParts, saveLabeledParts } from '@/lib/xp'
+import { addXP, getLabeledParts, saveLabeledParts, getUserData } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, Play, Pause } from 'lucide-react'
 
@@ -19,6 +19,9 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
   const [animationEnabled, setAnimationEnabled] = useState(true)
   const [heartBeat, setHeartBeat] = useState(1)
   const [gillCycle, setGillCycle] = useState(0)
+  
+  // Check if already completed
+  const alreadyCompleted = getUserData().completedLevels.includes('innerorgans')
   
   // Load saved progress on mount
   useEffect(() => {
@@ -53,15 +56,19 @@ export function InnerOrgansLab({ onComplete }: InnerOrgansLabProps) {
     return () => clearInterval(interval)
   }, [animationEnabled])
   
+  // Completion check - only if not already completed
   useEffect(() => {
-    if (labeledParts.length === parts.length && !justCompleted) {
+    // Skip if already completed in user data (prevents re-triggering on reload)
+    if (alreadyCompleted) return
+    
+    if (labeledParts.length === parts.length && labeledParts.length > 0 && !justCompleted) {
       setJustCompleted(true)
       setTimeout(() => {
         speak('Hervorragend! Du hast alle inneren Organe der Forelle beschriftet!')
         onComplete(true)
       }, 1000)
     }
-  }, [labeledParts, parts.length, justCompleted, onComplete])
+  }, [labeledParts, parts.length, justCompleted, onComplete, alreadyCompleted])
   
   const handlePartClick = (partId: string) => {
     if (labeledParts.includes(partId)) return

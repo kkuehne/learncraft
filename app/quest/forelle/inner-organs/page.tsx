@@ -32,12 +32,13 @@ export default function InnerOrgansLevel() {
       // Check if both anatomy parts are complete
       const userData = getUserData()
       const isAnatomyDone = userData.completedLevels.includes('anatomy') || anatomyComplete
+      const hasCelebrated = hasSeenMasterCelebration()
       
-      if (isAnatomyDone && !alreadyCelebrated) {
+      if (isAnatomyDone && !hasCelebrated) {
         // Both parts done AND not yet celebrated - show master celebration!
         markMasterCelebrationSeen()
         setShowMasterModal(true)
-      } else if (isAnatomyDone && alreadyCelebrated) {
+      } else if (isAnatomyDone && hasCelebrated) {
         // Both done but already celebrated - just show completion screen
         // No modal, no audio
       } else {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { forelleAnatomy, professorEich } from '@/lib/data'
-import { addXP, getLabeledParts, saveLabeledParts } from '@/lib/xp'
+import { addXP, getLabeledParts, saveLabeledParts, getUserData } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, AlertCircle } from 'lucide-react'
 
@@ -67,6 +67,9 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   const [attempts, setAttempts] = useState<Record<string, number>>({})
   const [justCompleted, setJustCompleted] = useState(false)
   
+  // Check if already completed
+  const alreadyCompleted = getUserData().completedLevels.includes('anatomy')
+  
   // Load saved progress on mount
   useEffect(() => {
     const savedParts = getLabeledParts('anatomy')
@@ -76,15 +79,19 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   const parts = forelleAnatomy.parts
   const progress = (labeledParts.length / parts.length) * 100
   
+  // Completion check - only if not already completed
   useEffect(() => {
-    if (labeledParts.length === parts.length && !justCompleted) {
+    // Skip if already completed in user data (prevents re-triggering on reload)
+    if (alreadyCompleted) return
+    
+    if (labeledParts.length === parts.length && labeledParts.length > 0 && !justCompleted) {
       setJustCompleted(true)
       setTimeout(() => {
         speak('Hervorragend! Du hast alle Teile der Forelle beschriftet!')
         onComplete(true)
       }, 1000)
     }
-  }, [labeledParts, parts.length, justCompleted, onComplete])
+  }, [labeledParts, parts.length, justCompleted, onComplete, alreadyCompleted])
   
   const handlePartClick = (partId: string) => {
     if (labeledParts.includes(partId)) return

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { speak, stopSpeaking } from '@/lib/speech'
 import { Check, Microscope, ArrowRight, X } from 'lucide-react'
@@ -11,14 +11,17 @@ interface AnatomyMasterProps {
 }
 
 export function AnatomyMaster({ onClose }: AnatomyMasterProps) {
+  const hasSpoken = useRef(false)
+
   useEffect(() => {
-    // Audio nur einmal beim ersten Mount abspielen
-    // Wenn Komponente neu gemountet wird (Seitenwechsel), läuft useEffect erneut
-    // Aber der Schutz ist in der aufrufenden Komponente (inner-organs/page.tsx)
-    speak('Hervorragend! Du hast die komplette Forellen-Anatomie gemeistert! Äußere Form und innere Organe - du bist ein wahrer Experte!')
+    // Audio nur einmal abspielen - useRef als zusätzliche Sicherheit
+    if (!hasSpoken.current) {
+      hasSpoken.current = true
+      speak('Hervorragend! Du hast die komplette Forellen-Anatomie gemeistert! Äußere Form und innere Organe - du bist ein wahrer Experte!')
+    }
     
     return () => stopSpeaking()
-  }, []) // Leeres Array = nur beim Mount
+  }, [])
 
   const handleClose = () => {
     stopSpeaking()

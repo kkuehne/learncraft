@@ -114,7 +114,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
         message: `✅ Richtig! "${part.correctLabel}" beschriftet! +${part.xp} XP`,
         attempts: currentAttempts 
       })
-      speak(getRandomResponse(professorEich.correct))
+      speak((part as any).fact || getRandomResponse(professorEich.correct))
     } else {
       let message = '❌ Falsch! '
       if (result.similarity > 70) {

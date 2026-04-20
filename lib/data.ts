@@ -15,7 +15,8 @@ export const forelleAnatomy = {
       y: 25,
       correctLabel: 'Kiemendeckel',
       hint: 'Hier befinden sich die Kiemen zum Atmen',
-      xp: 15
+      xp: 15,
+      fact: 'Die Kiemen bestehen aus 4 Kiemenbögen mit jeweils zwei Kiemenblättchen. Das Gegenstromprinzip ermöglicht einen Wirkungsgrad von über 80 Prozent beim Sauerstoffaustausch.'
     },
     {
       id: 'flosse-ruecken',
@@ -24,7 +25,8 @@ export const forelleAnatomy = {
       y: 15,
       correctLabel: 'Rückenflosse',
       hint: 'Die Flosse auf dem Rücken zur Stabilisierung',
-      xp: 10
+      xp: 10,
+      fact: 'Die Rückenflosse dient der Stabilisierung und Lenkung. Sie wird von Muskeln gestützt und kann bei Bedarf eingeklappt werden, um Widerstand zu reduzieren.'
     },
     {
       id: 'fettflosse',
@@ -33,7 +35,8 @@ export const forelleAnatomy = {
       y: 12,
       correctLabel: 'Fettflosse',
       hint: 'Kleine Fette Flosse hinter der Rückenflosse',
-      xp: 10
+      xp: 10,
+      fact: 'Die Fettflosse ist ein typisches Merkmal der Lachsfische. Sie enthält fettreiches Gewebe und dient möglicherweise der Wahrnehmung von Strömungen.'
     },
     {
       id: 'flosse-brust',
@@ -42,7 +45,8 @@ export const forelleAnatomy = {
       y: 45,
       correctLabel: 'Brustflosse',
       hint: 'Die seitlichen Flossen zur Steuerung',
-      xp: 10
+      xp: 10,
+      fact: 'Die Brustflossen ermöglichen präzise Richtungsänderungen und das Bremsen. Sie sind mit Schultergürtel verbunden und können unabhängig voneinander bewegt werden.'
     },
     {
       id: 'flosse-after',
@@ -51,7 +55,8 @@ export const forelleAnatomy = {
       y: 50,
       correctLabel: 'Afterflosse',
       hint: 'Die Flosse am Bauch vor dem Schwanz',
-      xp: 10
+      xp: 10,
+      fact: 'Die Afterflosse sitzt auf der Bauchseite vor der Schwanzflosse. Zusammen mit der Bauchflosse dient sie der vertikalen Steuerung und Stabilisierung.'
     },
     {
       id: 'flosse-seite',
@@ -60,7 +65,8 @@ export const forelleAnatomy = {
       y: 45,
       correctLabel: 'Seitenlinienorgan',
       hint: 'Wichtig für die Orientierung im Wasser',
-      xp: 15
+      xp: 15,
+      fact: 'Das Seitenlinienorgan besteht aus Sinneszellen, die Druckwellen und Strömungen im Wasser wahrnehmen. So kann die Forelle Beutetiere auch im Dunkeln orten.'
     },
     {
       id: 'schwanz',
@@ -69,7 +75,8 @@ export const forelleAnatomy = {
       y: 40,
       correctLabel: 'Schwanzflosse',
       hint: 'Die große Flosse hinten zum Schwimmen',
-      xp: 10
+      xp: 10,
+      fact: 'Die tief gegabelte Schwanzflosse ist das Hauptantriebsorgan. Durch schnelle Schläge kann die Forelle kurzzeitig Geschwindigkeiten bis zu 40 Kilometer pro Stunde erreichen.'
     }
   ]
 }

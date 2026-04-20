@@ -127,12 +127,12 @@ export function LearningPath({ onSelectStation, currentStation }: LearningPathPr
                     {/* Animated Arrow for Current Station */}
                     {isCurrent && (
                       <motion.div
-                        animate={{ y: [0, -10, 0] }}
+                        animate={{ y: [0, 10, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
                         className={`absolute -top-8 ${isEven ? 'right-8' : 'left-8'}`}
                       >
                         <ArrowRight 
-                          className="w-8 h-8 text-yellow-400 transform rotate-[-90deg]" 
+                          className="w-8 h-8 text-yellow-400 transform rotate-[90deg]" 
                         />
                       </motion.div>
                     )}

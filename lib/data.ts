@@ -42,7 +42,7 @@ export const learningPath = {
       emoji: '👑',
       description: 'Textbasierte Denk-Challenges - Analyse, Vernetzung, Reflexion (300 XP)',
       category: 'boss',
-      requiredXP: 490,
+      requiredXP: 350,
       totalXP: 300,
       locked: true,
       color: '#dc2626',

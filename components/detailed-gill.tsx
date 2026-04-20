@@ -225,8 +225,8 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                   }`}
                   style={{ 
                     borderLeft: `4px solid ${part.color}`,
-                    ringColor: selectedPart === part.id ? part.color : undefined
-                  }}
+                    '--tw-ring-color': selectedPart === part.id ? part.color : undefined
+                  } as React.CSSProperties}
                 >
                   <div className="font-medium text-gray-800">{part.name}</div>
                 </button>

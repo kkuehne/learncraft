@@ -33,7 +33,7 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-5xl w-full shadow-2xl overflow-hidden">
+      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-700 to-blue-500 p-4 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white">
@@ -47,7 +47,7 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 overflow-auto">
           {/* Erklärung mit Prof. Eich */}
           <div className="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded-r-lg">
             <div className="flex items-start gap-3">
@@ -72,8 +72,8 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
           </div>
 
           {/* Schema-Animation */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6 relative">
-            <svg viewBox="0 0 700 450" className="w-full h-auto">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 relative overflow-auto max-h-[50vh]">
+            <svg viewBox="0 0 700 380" className="w-full h-auto" style={{ maxHeight: '45vh' }}>
               <defs>
                 {/* Farbverläufe */}
                 <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">

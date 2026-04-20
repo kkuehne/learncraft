@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { habitatTour } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
-import { MapPin, Volume2, X, Info, Sparkles } from 'lucide-react'
+import { MapPin, Volume2, X, Info, Square } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XPReward } from '@/components/xp-reward'
 
@@ -48,12 +48,18 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
 
   const playAudio = () => {
     if (activeHotspot) {
-      setIsPlaying(true)
-      speak(activeHotspot.profEichAudio)
-      
-      // Estimate duration (roughly 150 chars per 10 seconds)
-      const estimatedDuration = Math.max(3000, activeHotspot.profEichAudio.length * 50)
-      setTimeout(() => setIsPlaying(false), estimatedDuration)
+      if (isPlaying) {
+        // Stop current audio
+        stopSpeaking()
+        setIsPlaying(false)
+      } else {
+        setIsPlaying(true)
+        speak(activeHotspot.profEichAudio)
+        
+        // Estimate duration (roughly 150 chars per 10 seconds)
+        const estimatedDuration = Math.max(3000, activeHotspot.profEichAudio.length * 50)
+        setTimeout(() => setIsPlaying(false), estimatedDuration)
+      }
     }
   }
 
@@ -225,18 +231,17 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
                   
                   <button
                     onClick={playAudio}
-                    disabled={isPlaying}
                     className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all
                       ${isPlaying 
-                        ? 'bg-purple-100 text-purple-600' 
+                        ? 'bg-red-500 text-white hover:bg-red-600' 
                         : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105'
                       }
                     `}
                   >
                     {isPlaying ? (
                       <>
-                        <Volume2 className="w-5 h-5 animate-pulse" />
-                        Prof. Eich spricht...
+                        <Square className="w-5 h-5 fill-current" />
+                        Prof. Eich stoppen
                       </>
                     ) : (
                       <>

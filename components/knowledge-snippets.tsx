@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { knowledgeSnippets } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
-import { Play, Pause, Volume2, Clock, ChevronRight, ChevronLeft, Check, Sparkles } from 'lucide-react'
+import { Play, Square, Clock, ChevronRight, ChevronLeft, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { XPReward } from '@/components/xp-reward'
 
@@ -30,6 +30,7 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
 
   const playAudio = () => {
     if (isPlaying) {
+      // Stop (not pause) - Web Speech API doesn't support true pause
       stopSpeaking()
       setIsPlaying(false)
     } else {
@@ -43,7 +44,7 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
         return newSet
       })
       
-      // Estimate duration
+      // Estimate duration - this is when it will auto-stop
       const estimatedDuration = Math.max(3000, currentSnippet.audioText.length * 50)
       setTimeout(() => setIsPlaying(false), estimatedDuration)
     }
@@ -139,12 +140,12 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
                 onClick={playAudio}
                 className={`w-16 h-16 rounded-full flex items-center justify-center transition-all
                   ${isPlaying 
-                    ? 'bg-white text-purple-600 animate-pulse' 
+                    ? 'bg-red-500 text-white hover:bg-red-600' 
                     : 'bg-white/20 hover:bg-white/30 text-white'
                   }
                 `}
               >
-                {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
+                {isPlaying ? <Square className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 ml-1" />}
               </button>
               
               <div className="flex-1">
@@ -152,7 +153,7 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
                   {isPlaying ? 'Prof. Eich spricht...' : 'Prof. Eich erklärt'}
                 </p>
                 <p className="text-purple-200 text-sm">
-                  {isPlaying ? 'Klicke zum Pausieren' : 'Klicke zum Abspielen'}
+                  {isPlaying ? 'Klicke zum Stoppen (startet neu bei erneutem Klick)' : 'Klicke zum Abspielen'}
                 </p>
               </div>
             </div>

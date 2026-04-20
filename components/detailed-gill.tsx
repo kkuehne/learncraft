@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { X } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Volume2 } from 'lucide-react'
+import { speak } from '@/lib/speech'
+import { professorEich } from '@/lib/data'
 
 interface DetailedGillProps {
   isOpen: boolean
@@ -11,6 +13,14 @@ interface DetailedGillProps {
 export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
   const [selectedPart, setSelectedPart] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        speak('Willkommen in der detaillierten Kiemenanatomie. Klicke auf die farbigen Strukturen, um mehr zu erfahren.')
+      }, 500)
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   const gillParts = [
@@ -18,35 +28,48 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
       id: 'reuse',
       name: 'Kiemenreuse',
       description: 'Filtert Nahrungspartikel aus dem Wasser und schutzt die Kiemen vor Beschadigung.',
+      audioText: 'Die Kiemenreuse ist ein feiner Kamm aus knochigen Fortsatzen. Sie filtert Nahrungspartikel aus dem Wasser und schutzt die empfindlichen Kiemenblatter vor Beschadigung durch Fremdkorper.',
       color: '#8b5cf6',
     },
     {
       id: 'blattchen',
       name: 'Kiemenblattchen',
       description: 'Feine Fortsatze an den Kiemenbogen, die die eigentliche Atmungsoberflache bilden.',
+      audioText: 'Die Kiemenblattchen sind papier dunne, gefaltete Fortsatze an den Kiemenbogen. Hier findet der eigentliche Gasaustausch statt. Durch die Falten wird die Oberflache enorm vergrossert.',
       color: '#ec4899',
     },
     {
       id: 'herzgefasz',
       name: 'Vom Herzen kommendes Kiemengefass',
       description: 'Afferentes Gefass - fuhrt sauerstoffarmes Blut vom Herz zu den Kiemen.',
+      audioText: 'Das vom Herzen kommende Kiemengefass ist ein afferentes Blutgefass. Es transportiert sauerstoffarmes Blut vom Herzen zu den Kiemen, wo es mit Sauerstoff angereichert wird.',
       color: '#dc2626',
     },
     {
       id: 'kapillaren',
       name: 'Kiemenkapillaren',
       description: 'Haargefasse in den Kiemenblattchen, hier findet der Gasaustausch statt.',
+      audioText: 'In den Kiemenkapillaren findet der eigentliche Gasaustausch statt. Die Blutgefasse sind hier so dunne, dass Sauerstoff und Kohlendioxid durch die Membran diffundieren konnen. Das Gegenstromprinzip macht dies besonders effizient.',
       color: '#f97316',
     },
     {
       id: 'korpergefasz',
       name: 'Zum Korper fuhrendes Kiemengefass',
       description: 'Efferentes Gefass - fuhrt sauerstoffreiches Blut vom Kopf zum Rest des Korpers.',
+      audioText: 'Das zum Korper fuhrende Kiemengefass ist ein efferentes Gefass. Nach dem Gasaustausch fließt hier sauerstoffreiches Blut vom Kopf zu allen anderen Korperteilen der Forelle.',
       color: '#16a34a',
     },
   ]
 
   const selectedPartData = selectedPart ? gillParts.find(p => p.id === selectedPart) : null
+
+  const handlePartClick = (partId: string) => {
+    setSelectedPart(partId)
+    const part = gillParts.find(p => p.id === partId)
+    if (part?.audioText) {
+      speak(part.audioText)
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -64,6 +87,33 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
         </div>
 
         <div className="flex flex-1 overflow-hidden">
+          {/* Prof. Eich Info-Box */}
+          <div className="w-80 bg-amber-50 border-r border-amber-200 p-4 overflow-auto flex-shrink-0">
+            <div className="flex items-start gap-3 mb-4">
+              <span className="text-4xl">🦫</span>
+              <div>
+                <p className="font-bold text-amber-800">Professor Eich</p>
+                <p className="text-sm text-gray-700">
+                  Klicke auf die farbigen Strukturen, um meine Erklärung zu hören!
+                </p>
+              </div>
+            </div>
+            
+            {selectedPartData && (
+              <div className="bg-white rounded-lg p-3 border border-amber-200 shadow-sm">
+                <button 
+                  onClick={() => speak(selectedPartData.audioText)}
+                  className="w-full flex items-center justify-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 py-2 rounded-lg transition-colors mb-2"
+                >
+                  <Volume2 size={18} />
+                  <span className="text-sm font-medium">Nochmal anhören</span>
+                </button>
+                <p className="text-xs text-gray-500 text-center">
+                  Audio wird automatisch abgespielt
+                </p>
+              </div>
+            )}
+          </div>
           <div className="flex-1 bg-gradient-to-b from-blue-50 to-cyan-50 p-6 overflow-auto">
             <svg viewBox="0 0 600 500" className="w-full h-full min-h-[450px]">
               <defs>
@@ -79,7 +129,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 Querschnitt durch einen Kiemenbogen
               </text>
 
-              <g className="cursor-pointer" onClick={() => setSelectedPart('reuse')}>
+              <g className="cursor-pointer" onClick={() => handlePartClick('reuse')}>
                 <path 
                   d="M 100 60 Q 150 40 200 55 Q 250 45 300 60 Q 350 55 400 65" 
                   fill="none" 
@@ -105,7 +155,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 )}
               </g>
 
-              <g className="cursor-pointer" onClick={() => setSelectedPart('blattchen')}>
+              <g className="cursor-pointer" onClick={() => handlePartClick('blattchen')}>
                 {Array.from({ length: 8 }).map((_, i) => (
                   <g key={i}>
                     <ellipse 
@@ -128,7 +178,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 )}
               </g>
 
-              <g className="cursor-pointer" onClick={() => setSelectedPart('herzgefasz')}>
+              <g className="cursor-pointer" onClick={() => handlePartClick('herzgefasz')}>
                 <path 
                   d="M 80 350 Q 100 320 140 310 Q 180 300 220 290" 
                   fill="none" 
@@ -150,7 +200,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 )}
               </g>
 
-              <g className="cursor-pointer" onClick={() => setSelectedPart('kapillaren')}>
+              <g className="cursor-pointer" onClick={() => handlePartClick('kapillaren')}>
                 {Array.from({ length: 8 }).map((_, i) => (
                   <g key={i}>
                     {Array.from({ length: 5 }).map((_, j) => (
@@ -175,7 +225,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
                 )}
               </g>
 
-              <g className="cursor-pointer" onClick={() => setSelectedPart('korpergefasz')}>
+              <g className="cursor-pointer" onClick={() => handlePartClick('korpergefasz')}>
                 <path 
                   d="M 380 290 Q 420 300 460 310 Q 500 320 520 350" 
                   fill="none" 
@@ -217,7 +267,7 @@ export function DetailedGill({ isOpen, onClose }: DetailedGillProps) {
               {gillParts.map((part) => (
                 <button
                   key={part.id}
-                  onClick={() => setSelectedPart(part.id)}
+                  onClick={() => handlePartClick(part.id)}
                   className={`w-full text-left p-3 rounded-lg transition-all ${
                     selectedPart === part.id
                       ? 'bg-gray-100 ring-2 ring-offset-2'

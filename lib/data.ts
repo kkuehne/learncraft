@@ -40,10 +40,10 @@ export const learningPath = {
       id: 'boss-arena',
       name: 'Boss Arena',
       emoji: '👑',
-      description: 'Die ultimative Challenge für Forellen-Experten',
+      description: 'Textbasierte Denk-Challenges - Analyse, Vernetzung, Reflexion (300 XP)',
       category: 'boss',
       requiredXP: 490,
-      totalXP: 150,
+      totalXP: 300,
       locked: true,
       color: '#dc2626',
       isBoss: true

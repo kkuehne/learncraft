@@ -151,16 +151,16 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     if (part) speak(part.hint)
   }
   
-  // Hotspot-Positionen - alle Flossen
+  // Hotspot-Positionen - alle Flossen (neben den Flossen, nicht darauf)
   const getHotspotPos = (partId: string) => {
     const positions: Record<string, {x: number, y: number}> = {
-      'kiemen': { x: 218, y: 40 },
-      'flosse-ruecken': { x: 138, y: 10 },      // Spitze Rückenflosse
-      'fettflosse': { x: 82, y: 15 },           // Fettflosse
-      'flosse-brust': { x: 210, y: 60 },        // Brustflosse
-      'flosse-after': { x: 108, y: 62 },        // Afterflosse
-      'flosse-seite': { x: 145, y: 45 },        // Seitenlinie
-      'schwanz': { x: 35, y: 48 }               // Schwanzflosse
+      'kiemen': { x: 215, y: 42 },           // Neben Kiemendeckel
+      'flosse-ruecken': { x: 138, y: 5 },    // Über der Rückenflosse
+      'fettflosse': { x: 70, y: 10 },        // Links der Fettflosse
+      'flosse-brust': { x: 240, y: 65 },      // Unter der Brustflosse
+      'flosse-after': { x: 70, y: 65 },      // Links der Afterflosse
+      'flosse-seite': { x: 120, y: 55 },     // Über der Seitenlinie
+      'schwanz': { x: 25, y: 48 }             // Hinter dem Schwanz
     }
     return positions[partId] || { x: 0, y: 0 }
   }

@@ -72,3 +72,7 @@ export function resetProgress(): void {
   if (typeof window === 'undefined') return
   localStorage.removeItem(STORAGE_KEY)
 }
+
+export function getTotalXP(): number {
+  return getUserData().xp
+}

@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { AnatomyLab } from './anatomy-lab'
 import { InnerOrgansLab } from './inner-organs-lab'
-import { Microscope, Heart, ChevronLeft } from 'lucide-react'
+import { GillDetail } from './gill-detail'
+import { DetailedGill } from './detailed-gill'
+import { Microscope, Heart, ChevronLeft, Info, Wind } from 'lucide-react'
 import Link from 'next/link'
 
 interface AnatomyLabContainerProps {
@@ -12,6 +14,8 @@ interface AnatomyLabContainerProps {
 
 export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
   const [activeTab, setActiveTab] = useState<'outer' | 'inner'>('outer')
+  const [showGillDetail, setShowGillDetail] = useState(false)
+  const [showDetailedGill, setShowDetailedGill] = useState(false)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-900 via-cyan-900 to-blue-950">
@@ -28,6 +32,25 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
           <h1 className="text-3xl font-bold text-white">🔬 Anatomie Lab</h1>
           
           <div className="w-24"></div> {/* Spacer for centering */}
+        </div>
+
+        {/* Detail Animation Buttons - Always visible */}
+        <div className="flex justify-center gap-4 mb-6">
+          <button
+            onClick={() => setShowGillDetail(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl font-bold hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Wind size={20} />
+            Gegenstromprinzip
+          </button>
+          
+          <button
+            onClick={() => setShowDetailedGill(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:from-violet-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Info size={20} />
+            Detaillierte Kiemenanatomie
+          </button>
         </div>
 
         {/* Tab Navigation */}
@@ -90,6 +113,10 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
           )}
         </div>
       </div>
+
+      {/* Detail Modals */}
+      <GillDetail isOpen={showGillDetail} onClose={() => setShowGillDetail(false)} />
+      <DetailedGill isOpen={showDetailedGill} onClose={() => setShowDetailedGill(false)} />
     </div>
   )
 }

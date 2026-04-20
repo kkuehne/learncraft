@@ -360,7 +360,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
             <h3 className="text-xl font-bold mb-4 text-gray-800">
-              {parts.find(p => p.id === selectedPart)?.question}
+              Teil beschriften: {parts.find(p => p.id === selectedPart)?.name}
             </h3>
             
             <input

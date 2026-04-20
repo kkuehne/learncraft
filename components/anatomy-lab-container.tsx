@@ -5,8 +5,10 @@ import { AnatomyLab } from './anatomy-lab'
 import { InnerOrgansLab } from './inner-organs-lab'
 import { GillDetail } from './gill-detail'
 import { DetailedGill } from './detailed-gill'
+import { AnatomyMaster } from './anatomy-master'
 import { Microscope, Heart, ChevronLeft, Info, Wind } from 'lucide-react'
 import Link from 'next/link'
+import { getUserData, completeLevel } from '@/lib/xp'
 
 interface AnatomyLabContainerProps {
   onComplete?: (success: boolean) => void
@@ -16,6 +18,39 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
   const [activeTab, setActiveTab] = useState<'outer' | 'inner'>('outer')
   const [showGillDetail, setShowGillDetail] = useState(false)
   const [showDetailedGill, setShowDetailedGill] = useState(false)
+  const [showMasterModal, setShowMasterModal] = useState(false)
+
+  // Check completion status
+  const checkBothCompleted = () => {
+    const userData = getUserData()
+    const anatomyDone = userData.completedLevels.includes('anatomy')
+    const innerDone = userData.completedLevels.includes('innerorgans')
+    return anatomyDone && innerDone
+  }
+
+  const handleOuterComplete = () => {
+    completeLevel('anatomy')
+    onComplete?.(true)
+    
+    // Check if both are now complete
+    setTimeout(() => {
+      if (checkBothCompleted()) {
+        setShowMasterModal(true)
+      }
+    }, 500)
+  }
+
+  const handleInnerComplete = () => {
+    completeLevel('innerorgans')
+    onComplete?.(true)
+    
+    // Check if both are now complete
+    setTimeout(() => {
+      if (checkBothCompleted()) {
+        setShowMasterModal(true)
+      }
+    }, 500)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-900 via-cyan-900 to-blue-950">
@@ -98,7 +133,7 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
                   Beschrifte die Flossen und Körperteile der Forelle. Klicke auf die roten Punkte!
                 </p>
               </div>
-              <AnatomyLab onComplete={onComplete || (() => {})} />
+              <AnatomyLab onComplete={handleOuterComplete} />
             </div>
           ) : (
             <div className="animate-fadeIn">
@@ -108,11 +143,16 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
                   Erkunde die inneren Organe mit Herzschlag- und Atmungsanimation!
                 </p>
               </div>
-              <InnerOrgansLab onComplete={onComplete || (() => {})} />
+              <InnerOrgansLab onComplete={handleInnerComplete} />
             </div>
           )}
         </div>
       </div>
+
+      {/* Master Modal - shows when both anatomy parts completed */}
+      {showMasterModal && (
+        <AnatomyMaster onClose={() => setShowMasterModal(false)} />
+      )}
 
       {/* Detail Modals */}
       <GillDetail isOpen={showGillDetail} onClose={() => setShowGillDetail(false)} />

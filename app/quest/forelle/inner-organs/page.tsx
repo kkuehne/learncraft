@@ -6,7 +6,7 @@ import { XPBar } from '@/components/xp-bar'
 import { InnerOrgansLab } from '@/components/inner-organs-lab'
 import { AnatomyMaster } from '@/components/anatomy-master'
 import { forelleInnerOrgans } from '@/lib/data'
-import { completeLevel, getUserData } from '@/lib/xp'
+import { completeLevel, getUserData, hasSeenMasterCelebration, markMasterCelebrationSeen } from '@/lib/xp'
 import { speak } from '@/lib/speech'
 import { Check, Heart } from 'lucide-react'
 
@@ -14,12 +14,14 @@ export default function InnerOrgansLevel() {
   const [completed, setCompleted] = useState(false)
   const [showMasterModal, setShowMasterModal] = useState(false)
   const [anatomyComplete, setAnatomyComplete] = useState(false)
+  const [alreadyCelebrated, setAlreadyCelebrated] = useState(false)
   const level = forelleInnerOrgans
 
-  // Check if anatomy was already completed
+  // Check completion status on mount
   useEffect(() => {
     const userData = getUserData()
     setAnatomyComplete(userData.completedLevels.includes('anatomy'))
+    setAlreadyCelebrated(hasSeenMasterCelebration())
   }, [])
   
   const handleComplete = (success: boolean) => {
@@ -31,9 +33,13 @@ export default function InnerOrgansLevel() {
       const userData = getUserData()
       const isAnatomyDone = userData.completedLevels.includes('anatomy') || anatomyComplete
       
-      if (isAnatomyDone) {
-        // Both parts done - show master celebration!
+      if (isAnatomyDone && !alreadyCelebrated) {
+        // Both parts done AND not yet celebrated - show master celebration!
+        markMasterCelebrationSeen()
         setShowMasterModal(true)
+      } else if (isAnatomyDone && alreadyCelebrated) {
+        // Both done but already celebrated - just show completion screen
+        // No modal, no audio
       } else {
         // Only inner organs done - small celebration
         speak('Fantastisch! Du kennst jetzt die inneren Organe der Forelle!')
@@ -41,7 +47,7 @@ export default function InnerOrgansLevel() {
     }
   }
   
-  // Small completion view (when only inner organs done, or after modal closed)
+  // Completion view (when only inner organs done, or after modal closed)
   if (completed && !showMasterModal) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-rose-900 via-pink-900 to-rose-950 p-4 md:p-8">
@@ -75,6 +81,14 @@ export default function InnerOrgansLevel() {
                   </Link>
                   <br />
                   für die komplette Meisterfeier!
+                </p>
+              </div>
+            )}
+            
+            {alreadyCelebrated && (
+              <div className="bg-green-50 border border-green-300 rounded-lg p-4 mb-6">
+                <p className="text-green-800">
+                  ✅ <strong>Bereits gemeistert!</strong> Du hast die komplette Anatomie bereits gefeiert.
                 </p>
               </div>
             )}
@@ -117,7 +131,7 @@ export default function InnerOrgansLevel() {
         
         <InnerOrgansLab onComplete={handleComplete} />
 
-        {/* Master Modal - only when both anatomy parts done */}
+        {/* Master Modal - only when both anatomy parts done AND not yet celebrated */}
         {showMasterModal && (
           <AnatomyMaster onClose={() => setShowMasterModal(false)} />
         )}

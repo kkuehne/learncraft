@@ -10,6 +10,7 @@ export interface UserData {
     anatomy?: string[]
     innerOrgans?: string[]
   }
+  seenMasterCelebration?: boolean
 }
 
 export function getUserData(): UserData {
@@ -56,6 +57,19 @@ export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 
     user.completedLevels.push(level)
     saveUserData(user)
   }
+}
+
+// Mark master celebration as seen - prevents repeated celebration
+export function markMasterCelebrationSeen(): void {
+  const user = getUserData()
+  user.seenMasterCelebration = true
+  saveUserData(user)
+}
+
+// Check if master celebration was already shown
+export function hasSeenMasterCelebration(): boolean {
+  const user = getUserData()
+  return user.seenMasterCelebration === true
 }
 
 // Save labeled parts for anatomy

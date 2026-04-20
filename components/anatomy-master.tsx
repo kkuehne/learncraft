@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { getUserData, completeLevel } from '@/lib/xp'
 import { speak, stopSpeaking } from '@/lib/speech'
 import { Check, Microscope, ArrowRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -13,12 +12,13 @@ interface AnatomyMasterProps {
 
 export function AnatomyMaster({ onClose }: AnatomyMasterProps) {
   useEffect(() => {
-    completeLevel('anatomy')
-    completeLevel('innerorgans')
+    // Audio nur einmal beim ersten Mount abspielen
+    // Wenn Komponente neu gemountet wird (Seitenwechsel), läuft useEffect erneut
+    // Aber der Schutz ist in der aufrufenden Komponente (inner-organs/page.tsx)
     speak('Hervorragend! Du hast die komplette Forellen-Anatomie gemeistert! Äußere Form und innere Organe - du bist ein wahrer Experte!')
     
     return () => stopSpeaking()
-  }, [])
+  }, []) // Leeres Array = nur beim Mount
 
   const handleClose = () => {
     stopSpeaking()
@@ -36,7 +36,7 @@ export function AnatomyMaster({ onClose }: AnatomyMasterProps) {
         initial={{ scale: 0.8, y: 50 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="bg-gradient-to-br from-blue-100 via-cyan-100 to-teal-100 border-4 border-blue-400 rounded-3xl p-8 text-center max-w-lg w-full shadow-2xl"
+        className="bg-gradient-to-br from-blue-100 via-cyan-100 to-teal-100 border-4 border-blue-400 rounded-3xl p-8 text-center max-w-lg w-full shadow-2xl relative"
       >
         <button
           onClick={handleClose}

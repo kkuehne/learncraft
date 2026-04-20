@@ -8,7 +8,7 @@ import { DetailedGill } from './detailed-gill'
 import { AnatomyMaster } from './anatomy-master'
 import { Microscope, Heart, ChevronLeft, Info, Wind } from 'lucide-react'
 import Link from 'next/link'
-import { getUserData, completeLevel } from '@/lib/xp'
+import { completeLevel, hasSeenMasterCelebration, markMasterCelebrationSeen } from '@/lib/xp'
 
 interface AnatomyLabContainerProps {
   onComplete?: (success: boolean) => void
@@ -20,55 +20,24 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
   const [showDetailedGill, setShowDetailedGill] = useState(false)
   const [showMasterModal, setShowMasterModal] = useState(false)
 
-  // Check completion status
-  const checkBothCompleted = () => {
-    const userData = getUserData()
-    const anatomyDone = userData.completedLevels.includes('anatomy')
-    const innerDone = userData.completedLevels.includes('innerorgans')
-    return anatomyDone && innerDone
-  }
-
   const handleOuterComplete = () => {
     completeLevel('anatomy')
     onComplete?.(true)
     
-    // Check if both are now complete
-    setTimeout(() => {
-      if (checkBothCompleted()) {
-        setShowMasterModal(true)
-      }
-    }, 500)
+    // In this context (tabbed view), we don't auto-show master
+    // The celebration happens when completing from the dedicated pages
   }
 
   const handleInnerComplete = () => {
     completeLevel('innerorgans')
     onComplete?.(true)
     
-    // Check if both are now complete
-    setTimeout(() => {
-      if (checkBothCompleted()) {
-        setShowMasterModal(true)
-      }
-    }, 500)
+    // Same here - no auto master modal in tabbed view
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-900 via-cyan-900 to-blue-950">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Link href="/">
-            <button className="flex items-center gap-2 text-cyan-200 hover:text-white transition-colors">
-              <ChevronLeft size={24} />
-              <span>Zurück zum Lernpfad</span>
-            </button>
-          </Link>
-          
-          <h1 className="text-3xl font-bold text-white">🔬 Anatomie Lab</h1>
-          
-          <div className="w-24"></div> {/* Spacer for centering */}
-        </div>
-
         {/* Detail Animation Buttons - Always visible */}
         <div className="flex justify-center gap-4 mb-6">
           <button
@@ -148,11 +117,6 @@ export function AnatomyLabContainer({ onComplete }: AnatomyLabContainerProps) {
           )}
         </div>
       </div>
-
-      {/* Master Modal - shows when both anatomy parts completed */}
-      {showMasterModal && (
-        <AnatomyMaster onClose={() => setShowMasterModal(false)} />
-      )}
 
       {/* Detail Modals */}
       <GillDetail isOpen={showGillDetail} onClose={() => setShowGillDetail(false)} />

@@ -1,5 +1,56 @@
 // Forelle-Quest Daten
 
+// Lernpfad Stationen
+export const learningPath = {
+  stations: [
+    {
+      id: 'training-camp',
+      name: 'Training Camp',
+      emoji: '🏕️',
+      description: 'Lerne die Grundlagen der Forellen-Anatomie',
+      category: 'theorie',
+      requiredXP: 0,
+      totalXP: 75,
+      locked: false,
+      color: '#22c55e'
+    },
+    {
+      id: 'anatomy-lab',
+      name: 'Anatomie Lab',
+      emoji: '🔬',
+      description: 'Beschriftet die äußere Anatomie der Forelle',
+      category: 'praxis',
+      requiredXP: 75,
+      totalXP: 90,
+      locked: true,
+      color: '#3b82f6'
+    },
+    {
+      id: 'quiz',
+      name: 'Quiz',
+      emoji: '📝',
+      description: 'Teste dein Wissen in drei Schwierigkeitsstufen',
+      category: 'wissenscheck',
+      requiredXP: 165,
+      totalXP: 325,
+      locked: true,
+      color: '#f59e0b'
+    },
+    {
+      id: 'boss-arena',
+      name: 'Boss Arena',
+      emoji: '👑',
+      description: 'Die ultimative Challenge für Forellen-Experten',
+      category: 'boss',
+      requiredXP: 490,
+      totalXP: 150,
+      locked: true,
+      color: '#dc2626',
+      isBoss: true
+    }
+  ]
+}
+
 // Forelle Anatomie-Daten (Außen) - Alle Flossen beschriftbar
 export const forelleAnatomy = {
   id: 'anatomy',

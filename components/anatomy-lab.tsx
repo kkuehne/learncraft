@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { forelleAnatomy, professorEich } from '@/lib/data'
 import { addXP } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
-import { Check, X, HelpCircle, AlertCircle } from 'lucide-react'
+import { Check, X, HelpCircle, AlertCircle, Info } from 'lucide-react'
+import { GillDetail } from './gill-detail'
 
 interface AnatomyLabProps {
   onComplete: (success: boolean) => void
@@ -66,6 +67,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
   const [userInput, setUserInput] = useState('')
   const [attempts, setAttempts] = useState<Record<string, number>>({})
   const [justCompleted, setJustCompleted] = useState(false)
+  const [showGillDetail, setShowGillDetail] = useState(false)
   
   const parts = forelleAnatomy.parts
   const progress = (labeledParts.length / parts.length) * 100
@@ -485,6 +487,19 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
         <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-500 inline-block"></span>Bereits beschriftet</div>
         <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>Ausgewählt</div>
       </div>
+      {/* Kiemen-Detail Button */}
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={() => setShowGillDetail(true)}
+          className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl font-bold hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
+        >
+          <Info size={20} />
+          🔬 Kiemen im Detail (Gegenstromprinzip)
+        </button>
+      </div>
+
+      {/* Gill Detail Modal */}
+      <GillDetail isOpen={showGillDetail} onClose={() => setShowGillDetail(false)} />
     </div>
   )
 }

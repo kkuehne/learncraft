@@ -7,10 +7,10 @@ export const learningPath = {
       id: 'training-camp',
       name: 'Training Camp',
       emoji: '🏕️',
-      description: 'Lerne die Grundlagen der Forellen-Anatomie (in Entwicklung)',
+      description: 'Sanfter Einstieg: Habitat-Tour, Audio-Wissen, Match-Spiel (60 XP)',
       category: 'theorie',
       requiredXP: 0,
-      totalXP: 0,
+      totalXP: 60,
       locked: false,
       color: '#22c55e'
     },

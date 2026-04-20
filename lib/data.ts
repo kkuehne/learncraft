@@ -1,22 +1,13 @@
 // Forelle-Quest Daten
 
-// Forelle Anatomie-Daten (Außen)
+// Forelle Anatomie-Daten (Außen) - Kopf entfernt, da Teil des durchgehenden Körpers
 export const forelleAnatomy = {
   id: 'anatomy',
   name: 'Anatomie',
   title: 'Die Forelle von außen und innen',
   description: 'Beschriftet das schematische Bild der Forelle',
-  totalXP: 60,
+  totalXP: 50,
   parts: [
-    {
-      id: 'kopf',
-      name: 'Kopf',
-      x: 85,
-      y: 35,
-      correctLabel: 'Kopf mit Maul',
-      hint: 'Vorne befindet sich das Maul zum Fressen',
-      xp: 10
-    },
     {
       id: 'kiemen',
       name: 'Kiemendeckel',

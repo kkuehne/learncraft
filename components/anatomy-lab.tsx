@@ -147,11 +147,10 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     if (part) speak(part.hint)
   }
   
-  // Hotspot-Positionen basierend auf neuer Forellen-Zeichnung
+  // Hotspot-Positionen - Kopf entfernt
   const getHotspotPos = (partId: string) => {
     const positions: Record<string, {x: number, y: number}> = {
-      'kopf': { x: 275, y: 42 },  // Maul-Bereich
-      'kiemen': { x: 218, y: 40 }, // Kiemendeckel (weiter vorne)
+      'kiemen': { x: 218, y: 40 },
       'flosse-ruecken': { x: 135, y: 16 },
       'flosse-seite': { x: 145, y: 45 },
       'schwanz': { x: 35, y: 48 }

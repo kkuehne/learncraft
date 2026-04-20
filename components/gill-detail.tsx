@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Play, Pause } from 'lucide-react'
+import { X, Play, Pause, Volume2 } from 'lucide-react'
+import { speak } from '@/lib/speech'
 
 interface GillDetailProps {
   isOpen: boolean
@@ -10,12 +11,18 @@ interface GillDetailProps {
 
 export function GillDetail({ isOpen, onClose }: GillDetailProps) {
   const [isPlaying, setIsPlaying] = useState(false)
+  const [audioPlayed, setAudioPlayed] = useState(false)
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !audioPlayed) {
       setIsPlaying(true)
+      setAudioPlayed(true)
+      // Prof. Eich Erklärung beim Öffnen
+      setTimeout(() => {
+        speak('Hier siehst du das Gegenstromprinzip in Aktion. Wasser und Blut fließen entgegengesetzt. Dadurch kann das Blut maximal Sauerstoff aufnehmen. Das ist so effizient wie ein Autobahn-Auffahrt, wo immer frischer Treibstoff nachkommt.')
+      }, 500)
     }
-  }, [isOpen])
+  }, [isOpen, audioPlayed])
 
   if (!isOpen) return null
 
@@ -36,15 +43,27 @@ export function GillDetail({ isOpen, onClose }: GillDetailProps) {
         </div>
 
         <div className="p-6">
-          {/* Erklärung */}
+          {/* Erklärung mit Prof. Eich */}
           <div className="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded-r-lg">
-            <h3 className="font-bold text-blue-900 text-lg mb-2">
-              Das Gegenstromprinzip
-            </h3>
-            <p className="text-blue-800">
-              Wasser und Blut fließen entgegengesetzt! Dadurch gibt es über die gesamte Kiemenlänge 
-              einen Sauerstoffgradienten – das Blut kann maximal O₂ aufnehmen.
-            </p>
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">🦫</span>
+              <div className="flex-1">
+                <h3 className="font-bold text-blue-900 text-lg mb-2">
+                  Professor Eich erklärt: Das Gegenstromprinzip
+                </h3>
+                <p className="text-blue-800 mb-3">
+                  Wasser und Blut fließen entgegengesetzt! Dadurch gibt es über die gesamte Kiemenlänge 
+                  einen Sauerstoffgradienten – das Blut kann maximal O₂ aufnehmen.
+                </p>
+                <button
+                  onClick={() => speak('Hier siehst du das Gegenstromprinzip in Aktion. Wasser und Blut fließen entgegengesetzt. Dadurch kann das Blut maximal Sauerstoff aufnehmen. Das ist so effizient wie ein Autobahn-Auffahrt, wo immer frischer Treibstoff nachkommt.')}
+                  className="flex items-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                >
+                  <Volume2 size={18} />
+                  Erklärung anhören
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Schema-Animation */}

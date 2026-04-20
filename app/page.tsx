@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LearningPath } from '@/components/learning-path'
 import { XPBar } from '@/components/xp-bar'
-import { forelleQuest, professorEich, learningPath } from '@/lib/data'
+import { learningPath as learningPathData } from '@/lib/data'
 import { getUserData, getTotalXP } from '@/lib/xp'
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
     
     // Aktuelle Station basierend auf XP ermitteln
     const xp = getTotalXP()
-    const stations = learningPath.stations
+    const stations = learningPathData.stations
     for (let i = stations.length - 1; i >= 0; i--) {
       if (xp >= stations[i].requiredXP) {
         setCurrentStation(stations[i].id)

@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { knowledgeSnippets } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
-import { Play, Pause, Volume2, Clock, ChevronRight, ChevronLeft, Check } from 'lucide-react'
+import { Play, Pause, Volume2, Clock, ChevronRight, ChevronLeft, Check, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { XPReward } from '@/components/xp-reward'
 
 interface KnowledgeSnippetsProps {
   onComplete: (earnedXP: number) => void
@@ -15,6 +16,7 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [watchedSnippets, setWatchedSnippets] = useState<Set<string>>(new Set())
   const [completed, setCompleted] = useState(false)
+  const [showReward, setShowReward] = useState(false)
 
   const currentSnippet = knowledgeSnippets[currentIndex]
   const totalSnippets = knowledgeSnippets.length
@@ -54,7 +56,8 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
       setCurrentIndex(prev => prev + 1)
     } else if (watchedSnippets.size >= 3 && !completed) {
       setCompleted(true)
-      setTimeout(() => onComplete(20), 1500)
+      setShowReward(true)
+      setTimeout(() => onComplete(20), 2500)
     }
   }
 
@@ -223,21 +226,12 @@ export function KnowledgeSnippets({ onComplete }: KnowledgeSnippetsProps) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Completion */}
-      <AnimatePresence>
-        {completed && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white text-center"
-          >
-            <div className="text-4xl mb-2">🎓</div>
-            <h3 className="text-xl font-bold mb-2">Wissens-Schnipsel abgeschlossen!</h3>
-            <p>Du hast {watchedSnippets.size} Erklärungen gehört!</p>
-            <div className="text-2xl font-bold mt-2">+20 XP!</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* XP Reward */}
+      <XPReward 
+        amount={20}
+        show={showReward}
+        message="Wissen angeeignet!"
+      />
     </div>
   )
 }

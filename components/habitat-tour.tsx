@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { habitatTour } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
-import { MapPin, Volume2, VolumeX, Info, X } from 'lucide-react'
+import { MapPin, Volume2, X, Info, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { XPReward } from '@/components/xp-reward'
 
 interface HabitatTourProps {
   onComplete: (earnedXP: number) => void
@@ -16,6 +17,7 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
   const [completed, setCompleted] = useState(false)
+  const [showReward, setShowReward] = useState(false)
 
   const totalHotspots = habitatTour.hotspots.length
   const progress = (visitedHotspots.length / totalHotspots) * 100
@@ -36,9 +38,10 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
       // Prüfe ob alle besucht
       if (newVisited.length === totalHotspots && !completed) {
         setCompleted(true)
+        setShowReward(true)
         setTimeout(() => {
-          onComplete(20) // 20 XP für alle Hotspots
-        }, 2000)
+          onComplete(20)
+        }, 2500)
       }
     }
   }
@@ -276,6 +279,12 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
           )}
         </AnimatePresence>
       </div>
+
+      <XPReward 
+        amount={20}
+        show={showReward}
+        message="Habitat entdeckt!"
+      />
     </div>
   )
 }

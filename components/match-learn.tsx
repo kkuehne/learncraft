@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { matchGame } from '@/lib/training-camp'
 import { speak } from '@/lib/speech'
-import { Check, X, RotateCcw, Trophy } from 'lucide-react'
+import { Check, X, RotateCcw, Trophy, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { XPReward } from '@/components/xp-reward'
 
 interface MatchGameProps {
   onComplete: (earnedXP: number) => void
@@ -16,6 +17,7 @@ export function MatchLearn({ onComplete }: MatchGameProps) {
   const [matchedPairs, setMatchedPairs] = useState<Set<string>>(new Set())
   const [wrongAttempt, setWrongAttempt] = useState(false)
   const [completed, setCompleted] = useState(false)
+  const [showReward, setShowReward] = useState(false)
 
   const pairs = matchGame.pairs
   const progress = (matchedPairs.size / pairs.length) * 100
@@ -65,7 +67,8 @@ export function MatchLearn({ onComplete }: MatchGameProps) {
       if (newMatched.size === pairs.length) {
         setTimeout(() => {
           setCompleted(true)
-          setTimeout(() => onComplete(20), 1500)
+          setShowReward(true)
+          setTimeout(() => onComplete(20), 2500)
         }, 500)
       }
     } else {
@@ -269,6 +272,12 @@ export function MatchLearn({ onComplete }: MatchGameProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <XPReward 
+        amount={20}
+        show={showReward}
+        message="Alles gematcht!"
+      />
     </div>
   )
 }

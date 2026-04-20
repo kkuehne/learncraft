@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { forellenSteckbrief } from '@/lib/training-camp'
 import { speak } from '@/lib/speech'
-import { MapPin, Ruler, Scale, Clock, Users, CheckCircle } from 'lucide-react'
+import { MapPin, Ruler, Scale, Clock, Users, CheckCircle, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { XPReward } from '@/components/xp-reward'
 
 interface ForellenSteckbriefProps {
   onComplete: (earnedXP: number) => void
@@ -14,6 +15,7 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
   const [readSections, setReadSections] = useState<Set<string>>(new Set())
   const [completed, setCompleted] = useState(false)
   const [showFunFact, setShowFunFact] = useState<number | null>(null)
+  const [showReward, setShowReward] = useState(false)
 
   const markAsRead = (sectionId: string) => {
     if (!readSections.has(sectionId)) {
@@ -24,7 +26,8 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
       // Check if at least 3 sections read
       if (newRead.size >= 3 && !completed) {
         setCompleted(true)
-        setTimeout(() => onComplete(20), 1000)
+        setShowReward(true)
+        setTimeout(() => onComplete(20), 2500)
       }
     }
   }
@@ -189,6 +192,12 @@ export function ForellenSteckbrief({ onComplete }: ForellenSteckbriefProps) {
           <p>Du kennst jetzt alle wichtigen Daten zur Forelle!</p>
         </motion.div>
       )}
+
+      <XPReward 
+        amount={20}
+        show={showReward}
+        message="Steckbrief entdeckt!"
+      />
     </div>
   )
 }

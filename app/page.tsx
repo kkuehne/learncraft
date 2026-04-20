@@ -31,21 +31,16 @@ export default function Home() {
     // Navigation zu den verschiedenen Stationen
     switch (stationId) {
       case 'training-camp':
-        window.location.href = '/quest/forelle/bronze'
+        // Training Camp ist aktuell leer
+        window.location.href = '/training-camp'
         break
       case 'anatomy-lab':
+        // Anatomie Lab enthält alle Animationen
         window.location.href = '/quest/forelle/anatomy'
         break
       case 'quiz':
-        // Quiz hat Unter-Level (Bronze, Silber, Gold)
-        const xp = getTotalXP()
-        if (xp < 125) {
-          window.location.href = '/quest/forelle/bronze'
-        } else if (xp < 200) {
-          window.location.href = '/quest/forelle/silver'
-        } else {
-          window.location.href = '/quest/forelle/gold'
-        }
+        // Quiz enthält Bronze, Silber, Gold
+        window.location.href = '/quiz'
         break
       case 'boss-arena':
         window.location.href = '/quest/forelle/boss'

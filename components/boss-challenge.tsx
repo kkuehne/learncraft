@@ -1,41 +1,43 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { bossChallenges, evaluateSubmission, BossChallenge } from '@/lib/boss-challenges'
-import { addXP, completeLevel } from '@/lib/xp'
+import { bossChallenges, evaluateSubmission, compareAttempts, AttemptResult } from '@/lib/boss-challenges'
+import { addXP, completeLevel, getUserData } from '@/lib/xp'
 import { speak } from '@/lib/speech'
-import { professorEich } from '@/lib/data'
 import { 
   ChevronLeft, 
   Send, 
   Lightbulb, 
   Trophy, 
-  Target, 
   AlertCircle,
   CheckCircle,
   Crown,
   Sparkles,
-  BarChart3,
+  RotateCcw,
+  TrendingUp,
   BookOpen,
-  BrainCircuit
+  ArrowRight,
+  Edit3
 } from 'lucide-react'
 import Link from 'next/link'
 
 export function BossChallengeComponent() {
   const [currentChallenge, setCurrentChallenge] = useState(0)
+  const [currentAttempt, setCurrentAttempt] = useState(1)
   const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [submitted, setSubmitted] = useState<Record<string, boolean>>({})
-  const [evaluations, setEvaluations] = useState<Record<string, ReturnType<typeof evaluateSubmission>>>({})
-  const [selfAssessment, setSelfAssessment] = useState<'surface' | 'deep' | 'expert'>('surface')
-  const [showHint, setShowHint] = useState<number | null>(null)
+  const [attempts, setAttempts] = useState<Record<string, AttemptResult[]>>({})
+  const [showHints, setShowHints] = useState<Record<string, boolean>>({})
   const [allCompleted, setAllCompleted] = useState(false)
   const [totalScore, setTotalScore] = useState(0)
+  const [isEditing, setIsEditing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const challenge = bossChallenges[currentChallenge]
   const currentAnswer = answers[challenge.id] || ''
-  const isSubmitted = submitted[challenge.id]
-  const evaluation = evaluations[challenge.id]
+  const currentAttempts = attempts[challenge.id] || []
+  const lastResult = currentAttempts[currentAttempts.length - 1]
+  const canRetry = currentAttempt < challenge.maxAttempts && (!lastResult || lastResult.score < 85)
+  const hasMoreAttempts = currentAttempt < challenge.maxAttempts
 
   // Auto-resize textarea
   useEffect(() => {
@@ -46,42 +48,82 @@ export function BossChallengeComponent() {
   }, [currentAnswer])
 
   const handleSubmit = () => {
-    if (currentAnswer.length < 50) {
-      speak('Das ist zu kurz für eine fundierte Analyse. Entwickle deine Gedanken weiter!')
+    if (currentAnswer.length < 100) {
+      speak('Das ist noch etwas kurz. Versuche, deine Gedanken ausführlicher zu erklären!')
       return
     }
 
-    const result = evaluateSubmission(currentAnswer, challenge, selfAssessment)
-    setEvaluations(prev => ({ ...prev, [challenge.id]: result }))
-    setSubmitted(prev => ({ ...prev, [challenge.id]: true }))
+    const result = evaluateSubmission(
+      currentAnswer, 
+      challenge, 
+      currentAttempt,
+      currentAttempts
+    )
     
-    // XP proportional zur Bewertung
-    const xpEarned = Math.round((result.score / 100) * challenge.xp)
-    addXP(xpEarned, `boss-${challenge.id}`)
+    // Speichere Versuch
+    const newAttempts = [...currentAttempts, result]
+    setAttempts(prev => ({ ...prev, [challenge.id]: newAttempts }))
+    
+    // XP beim ersten Mal
+    if (currentAttempt === 1) {
+      const xpEarned = Math.round((result.score / 100) * challenge.xp)
+      addXP(xpEarned, `boss-${challenge.id}`)
+    }
+    
+    // Vergleiche mit vorherigem Versuch
+    let feedbackMessage = result.feedback
+    if (currentAttempts.length > 0) {
+      const comparison = compareAttempts(currentAttempts[currentAttempts.length - 1], result)
+      if (comparison.improved) {
+        feedbackMessage += ` ${comparison.message}`
+      }
+    }
     
     // Audio Feedback
     setTimeout(() => {
-      speak(result.feedback)
-    }, 500)
+      speak(feedbackMessage)
+    }, 300)
 
     // Update total score
     setTotalScore(prev => prev + result.score)
+    
+    // Nächster Versuch oder nächste Challenge
+    if (result.score >= 85) {
+      setCurrentAttempt(challenge.maxAttempts) // Bestanden
+    } else {
+      setCurrentAttempt(prev => prev + 1)
+    }
+  }
+
+  const handleRetry = () => {
+    if (lastResult) {
+      setIsEditing(true)
+      setCurrentAttempt(currentAttempts.length + 1)
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus()
+          textareaRef.current.setSelectionRange(lastResult.text.length, lastResult.text.length)
+        }
+      }, 100)
+    }
   }
 
   const handleNext = () => {
     if (currentChallenge < bossChallenges.length - 1) {
       setCurrentChallenge(prev => prev + 1)
-      setSelfAssessment('surface')
-      setShowHint(null)
+      setCurrentAttempt(1)
+      setIsEditing(false)
+      setShowHints({})
     } else {
-      // All challenges completed
+      // Alle Challenges abgeschlossen
       const averageScore = totalScore / bossChallenges.length
-      if (averageScore >= 60) {
+      if (averageScore >= 50) {
         completeLevel('boss')
         setAllCompleted(true)
-        speak(`MEISTERHAFT! Durchschnittliche Bewertung: ${Math.round(averageScore)} Prozent! Du hast die ultimative Denk-Challenge gemeistert!`)
+        speak(`🎉 HERZLICHEN GLÜCKWUNSCH! Durchschnittliche Bewertung: ${Math.round(averageScore)} Prozent! Du hast die ultimative Denk-Challenge gemeistert und verdienst den Boss-Experten-Titel!`)
       } else {
-        speak(`Du hast alle Challenges bearbeitet. Durchschnitt: ${Math.round(averageScore)} Prozent. Für das Boss-Level-Abzeichen brauchst du 60 Prozent.`)
+        setAllCompleted(true)
+        speak(`Du hast alle Challenges durchgearbeitet. Durchschnitt: ${Math.round(averageScore)} Prozent. Für das Boss-Abzeichen brauchst du 50 Prozent. Versuche es gerne nochmal!`)
       }
     }
   }
@@ -89,325 +131,332 @@ export function BossChallengeComponent() {
   const handlePrevious = () => {
     if (currentChallenge > 0) {
       setCurrentChallenge(prev => prev - 1)
+      setCurrentAttempt(1)
+      setIsEditing(false)
+      setShowHints({})
     }
   }
 
+  const toggleHint = (hintIndex: number) => {
+    setShowHints(prev => ({ ...prev, [`${challenge.id}-${hintIndex}`]: !prev[`${challenge.id}-${hintIndex}`] }))
+  }
+
+  const handleAnswerChange = (text: string) => {
+    setAnswers(prev => ({ ...prev, [challenge.id]: text }))
+    setIsEditing(true)
+  }
+
+  // Berechne verfügbare Versuche
+  const attemptsLeft = challenge.maxAttempts - currentAttempt + 1
+  
+  // Beste Bewertung für diese Challenge
+  const bestResult = currentAttempts.length > 0 
+    ? currentAttempts.reduce((best, current) => current.score > best.score ? current : best)
+    : null
+
   if (allCompleted) {
-    return <BossCompletionScreen totalScore={totalScore} averageScore={totalScore / bossChallenges.length} />
+    return <BossCompletionScreen totalScore={totalScore} averageScore={totalScore / bossChallenges.length} attempts={attempts} />
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Link href="/">
             <button className="flex items-center gap-2 text-purple-200 hover:text-white transition-colors mb-4">
-              <ChevronLeft size={20} />
-              Zurück zum Lernpfad
+              <ChevronLeft size={24} />
+              <span>Zurück zum Lernpfad</span>
             </button>
           </Link>
           
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
-                👑 Boss Arena: Denk-Challenge
-              </h1>
-              <p className="text-purple-200">
-                Textbasierte Expertenfragen • Analyse • Vernetzung • Reflexion
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-4xl mb-1">🦫</div>
-              <div className="text-xs text-purple-300">Prof. Eich bewertet</div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
+              <Crown className="text-yellow-400" />
+              Boss Arena
+            </h1>
+            <div className="text-purple-200">
+              Challenge {currentChallenge + 1} von {bossChallenges.length}
             </div>
           </div>
-        </div>
-
-        {/* Progress */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-purple-200">Challenge {currentChallenge + 1} / {bossChallenges.length}</span>
-            <span className="text-purple-200">+{challenge.xp} XP max</span>
-          </div>
-          <div className="w-full bg-purple-900/50 rounded-full h-3">
+          
+          {/* Fortschrittsbalken */}
+          <div className="mt-4 bg-white/10 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${((currentChallenge + 1) / bossChallenges.length) * 100}%` }}
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 h-full transition-all duration-500"
+              style={{ width: `${((currentChallenge) / bossChallenges.length) * 100}%` }}
             />
           </div>
         </div>
 
         {/* Challenge Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* Challenge Header */}
-          <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 p-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-white/20 p-3 rounded-2xl">
-                <BrainCircuit className="w-8 h-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white mb-2">{challenge.title}</h2>
-                <div className="flex flex-wrap gap-2">
-                  {challenge.evaluationCriteria.coverage.map((criterion, idx) => (
-                    <span 
-                      key={idx}
-                      className="bg-white/20 text-white text-xs px-3 py-1 rounded-full"
-                    >
-                      {criterion}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-purple-500/30">
+          {/* Titel */}
+          <h2 className="text-2xl font-bold text-white mb-4">{challenge.title}</h2>
+          
+          {/* Frage */}
+          <div className="bg-purple-800/50 rounded-2xl p-6 mb-6">
+            <p className="text-white whitespace-pre-line leading-relaxed text-lg">
+              {challenge.question}
+            </p>
+          </div>
+          
+          {/* Kontext */}
+          <div className="bg-blue-800/30 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <BookOpen className="text-blue-300 flex-shrink-0 mt-1" size={20} />
+            <p className="text-blue-100 text-sm">{challenge.context}</p>
           </div>
 
-          <div className="p-6">
-            {/* Question */}
-            <div className="bg-slate-50 rounded-2xl p-6 mb-6 border-l-4 border-purple-500">
-              <div className="flex items-start gap-3 mb-3">
-                <Target className="w-5 h-5 text-purple-600 mt-1" />
-                <span className="font-semibold text-slate-700">Aufgabe:</span>
-              </div>
-              <pre className="whitespace-pre-wrap font-sans text-slate-700 text-sm leading-relaxed">
-                {challenge.question}
-              </pre>
-            </div>
+          {/* Lernziele */}
+          <div className="mb-6">
+            <h3 className="text-purple-200 font-semibold mb-2 flex items-center gap-2">
+              <Sparkles size={18} />
+              Deine Lernziele:
+            </h3>
+            <ul className="space-y-1">
+              {challenge.learningGoals.map((goal, idx) => (
+                <li key={idx} className="text-purple-100 text-sm flex items-center gap-2">
+                  <span className="text-purple-400">•</span>
+                  {goal}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Context */}
-            <div className="bg-amber-50 rounded-xl p-4 mb-6 border-l-4 border-amber-400">
-              <div className="flex items-start gap-3">
-                <Lightbulb className="w-5 h-5 text-amber-600 mt-0.5" />
-                <div>
-                  <span className="font-semibold text-amber-800 block mb-1">Denkanstoß:</span>
-                  <span className="text-amber-700 text-sm">{challenge.context}</span>
+          {/* Eingabebereich */}
+          {!lastResult || canRetry ? (
+            <div className="space-y-4">
+              <div className="relative">
+                <textarea
+                  ref={textareaRef}
+                  value={currentAnswer}
+                  onChange={(e) => handleAnswerChange(e.target.value)}
+                  placeholder={`Schreibe hier deine Antwort... (mindestens ${challenge.minLength} Zeichen)`}
+                  className="w-full bg-slate-800/80 rounded-2xl p-6 text-white placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[200px]"
+                  disabled={!!lastResult && !canRetry}
+                />
+                <div className="absolute bottom-4 right-4 text-slate-400 text-sm">
+                  {currentAnswer.length} Zeichen
                 </div>
               </div>
-            </div>
 
-            {/* Self-Assessment (before submit) */}
-            {!isSubmitted && (
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Wie tief ist dein aktuelles Verständnis dieses Themas?
-                </label>
-                <div className="flex gap-3">
-                  {(['surface', 'deep', 'expert'] as const).map((level) => (
+              {/* Hinweise */}
+              <div className="bg-amber-900/30 rounded-xl p-4">
+                <h4 className="text-amber-200 font-semibold mb-3 flex items-center gap-2">
+                  <Lightbulb size={18} />
+                  Hinweise ({challenge.hints.length} verfügbar)
+                </h4>
+                <div className="space-y-2">
+                  {challenge.hints.map((hint, idx) => (
                     <button
-                      key={level}
-                      onClick={() => setSelfAssessment(level)}
-                      className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all ${
-                        selfAssessment === level
-                          ? 'border-purple-500 bg-purple-50 text-purple-700'
-                          : 'border-slate-200 hover:border-purple-300 text-slate-600'
-                      }`}
+                      key={idx}
+                      onClick={() => toggleHint(idx)}
+                      className="w-full text-left p-3 rounded-lg bg-amber-800/30 hover:bg-amber-700/40 transition-colors text-amber-100 text-sm"
                     >
-                      <div className="font-semibold text-sm">
-                        {level === 'surface' && '📖 Oberflächlich'}
-                        {level === 'deep' && '🔍 Tiefgehend'}
-                        {level === 'expert' && '🎓 Experte'}
-                      </div>
+                      {showHints[`${challenge.id}-${idx}`] ? hint : `💡 Hinweis ${idx + 1} anzeigen...`}
                     </button>
                   ))}
                 </div>
               </div>
-            )}
 
-            {/* Answer Textarea */}
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                <BookOpen className="w-4 h-4" />
-                Deine Analyse (min. {challenge.minLength} Zeichen)
-              </label>
-              
-              <textarea
-                ref={textareaRef}
-                value={currentAnswer}
-                onChange={(e) => !isSubmitted && setAnswers(prev => ({ 
-                  ...prev, 
-                  [challenge.id]: e.target.value 
-                }))}
-                disabled={isSubmitted}
-                placeholder="Entwickle hier deine Antwort... Verbinde Anatomie mit Physiologie und Ökologie. Nutze alle Unterlagen, die du während des Lernpfads gesammelt hast!"
-                className="w-full min-h-[200px] p-4 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none resize-none text-slate-700 leading-relaxed disabled:bg-slate-50"
-              />
-              
-              <div className="flex justify-between text-xs text-slate-500 mt-2">
-                <span>{currentAnswer.length} Zeichen</span>
-                <span>Mindestens {challenge.minLength} Zeichen empfohlen</span>
-              </div>
-            </div>
-
-            {/* Hints */}
-            {!isSubmitted && (
-              <div className="mb-6">
-                <button
-                  onClick={() => setShowHint(showHint === currentChallenge ? null : currentChallenge)}
-                  className="flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium text-sm"
-                >
-                  <Lightbulb className="w-4 h-4" />
-                  {showHint === currentChallenge ? 'Hinweise verbergen' : 'Hinweise anzeigen (reduziert XP)'}
-                </button>
-                
-                {showHint === currentChallenge && (
-                  <div className="mt-3 bg-amber-50 rounded-xl p-4 border border-amber-200">
-                    <ul className="space-y-2">
-                      {challenge.hints.map((hint, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-amber-800">
-                          <span className="font-bold">{idx + 1}.</span>
-                          <span>{hint}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Submit Button */}
-            {!isSubmitted ? (
+              {/* Submit Button */}
               <button
                 onClick={handleSubmit}
-                disabled={currentAnswer.length < 50}
-                className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                disabled={currentAnswer.length < 100 || (!!lastResult && !canRetry)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                <Send className="w-5 h-5" />
-                An Prof. Eich senden
+                <Send size={20} />
+                {currentAttempt === 1 ? 'Antwort einreichen' : `Verbesserter Versuch ${currentAttempt}/${challenge.maxAttempts}`}
               </button>
-            ) : (
-              <div className="bg-slate-100 rounded-xl p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`text-4xl ${
-                    evaluation!.score >= 85 ? '🏆' :
-                    evaluation!.score >= 65 ? '⭐' :
-                    evaluation!.score >= 45 ? '📖' : '💭'
-                  }`}>
-                    {evaluation!.score >= 85 ? '🏆' :
-                     evaluation!.score >= 65 ? '⭐' :
-                     evaluation!.score >= 45 ? '📖' : '💭'}
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm text-slate-600 mb-1">Bewertung</div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-3xl font-bold text-purple-600">{evaluation!.score}%</div>
-                      <div className="text-sm text-slate-500">
-                        (+{Math.round((evaluation!.score / 100) * challenge.xp)} XP)
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-xl p-4 mb-4">
-                  <p className="text-slate-800 font-medium">{evaluation!.feedback}</p>
-                </div>
-                
-                {/* Keyword Coverage */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
-                    <BarChart3 className="w-4 h-4" />
-                    Themenabdeckung: {evaluation!.keywordResult.coverage}%
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {challenge.requiredKeywords.map(keyword => {
-                      const found = evaluation!.keywordResult.found.includes(keyword)
-                      return (
-                        <span 
-                          key={keyword}
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            found 
-                              ? 'bg-green-100 text-green-700' 
-                              : 'bg-slate-200 text-slate-500'
-                          }`}
-                        >
-                          {found ? '✓' : '○'} {keyword}
-                        </span>
-                      )
-                    })}
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleNext}
-                  className="w-full py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
-                >
-                  {currentChallenge < bossChallenges.length - 1 ? (
-                    <>
-                      Nächste Challenge
-                      <ChevronLeft className="w-5 h-5 rotate-180" />
-                    </>
-                  ) : (
-                    <>
-                      Alle Challenges abschließen
-                      <Trophy className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
+
+              {/* Versuche-Anzeige */}
+              <div className="flex items-center justify-center gap-2 text-purple-200">
+                <span>Versuch {currentAttempt} von {challenge.maxAttempts}</span>
+                {attemptsLeft <= 2 && attemptsLeft > 0 && (
+                  <span className="text-amber-400">(noch {attemptsLeft} {attemptsLeft === 1 ? 'Versuch' : 'Versuche'} übrig)</span>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          ) : null}
+
+          {/* Ergebnisanzeige */}
+          {lastResult && (
+            <div className={`mt-6 rounded-2xl p-6 border-2 ${
+              lastResult.score >= 85 ? 'bg-green-900/30 border-green-500' :
+              lastResult.score >= 65 ? 'bg-blue-900/30 border-blue-500' :
+              lastResult.score >= 45 ? 'bg-amber-900/30 border-amber-500' :
+              'bg-red-900/30 border-red-500'
+            }`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className={`text-xl font-bold ${
+                  lastResult.score >= 85 ? 'text-green-400' :
+                  lastResult.score >= 65 ? 'text-blue-400' :
+                  lastResult.score >= 45 ? 'text-amber-400' :
+                  'text-red-400'
+                }`}>
+                  {lastResult.score >= 85 ? '🌟 Exzellent!' :
+                   lastResult.score >= 65 ? '👍 Gut gemacht!' :
+                   lastResult.score >= 45 ? '📝 Ausbaufähig' :
+                   '💪 Weiter üben!'}
+                </h3>
+                <div className="text-2xl font-bold text-white">
+                  {lastResult.score}/100 Punkte
+                </div>
+              </div>
+
+              <p className="text-white mb-4">{lastResult.feedback}</p>
+
+              {/* Verbesserungsvorschläge */}
+              <div className="space-y-2">
+                <h4 className="text-purple-200 font-semibold flex items-center gap-2">
+                  <TrendingUp size={18} />
+                  {lastResult.score >= 85 ? 'Hervorragend! Hier kannst du noch tiefer gehen:' : 'So kannst du noch besser werden:'}
+                </h4>
+                <ul className="space-y-1">
+                  {lastResult.suggestions.map((suggestion, idx) => (
+                    <li key={idx} className="text-purple-100 text-sm flex items-start gap-2">
+                      <span className="text-purple-400 mt-1">•</span>
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Neue Keywords anzeigen */}
+              {currentAttempts.length > 1 && (
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <p className="text-green-400 text-sm">
+                    ✓ Neue Aspekte in diesem Versuch erkannt
+                  </p>
+                </div>
+              )}
+
+              {/* Weiter-Buttons */}
+              <div className="flex gap-4 mt-6">
+                {canRetry && (
+                  <button
+                    onClick={handleRetry}
+                    className="flex-1 flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold transition-colors"
+                  >
+                    <RotateCcw size={20} />
+                    Text verbessern
+                  </button>
+                )}
+                {(lastResult.score >= 85 || !canRetry) && (
+                  <button
+                    onClick={handleNext}
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 rounded-xl font-bold transition-all"
+                  >
+                    <ArrowRight size={20} />
+                    {currentChallenge < bossChallenges.length - 1 ? 'Nächste Challenge' : 'Abschluss'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Bestes Ergebnis anzeigen */}
+          {bestResult && currentAttempts.length > 1 && (
+            <div className="mt-4 bg-purple-800/30 rounded-xl p-4 flex items-center justify-between">
+              <span className="text-purple-200">Dein bestes Ergebnis:</span>
+              <span className={`font-bold text-xl ${
+                bestResult.score >= 85 ? 'text-green-400' :
+                bestResult.score >= 65 ? 'text-blue-400' :
+                'text-amber-400'
+              }`}>
+                {bestResult.score}/100
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function BossCompletionScreen({ totalScore, averageScore }: { totalScore: number, averageScore: number }) {
+// Abschluss-Screen
+function BossCompletionScreen({ 
+  totalScore, 
+  averageScore,
+  attempts 
+}: { 
+  totalScore: number
+  averageScore: number
+  attempts: Record<string, AttemptResult[]>
+}) {
+  const passed = averageScore >= 50
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center">
-        <div className="text-6xl mb-6">👑</div>
-        <h1 className="text-3xl font-bold text-purple-900 mb-4">
-          🏆 DENK-CHALLENGE MEISTER! 🏆
-        </h1>
-        
-        <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
-          {Math.round(averageScore)}%
-        </div>
-        <p className="text-slate-600 mb-8">
-          Durchschnittliche Bewertung über alle Challenges
-        </p>
-        
-        <div className="bg-purple-50 rounded-2xl p-6 mb-8">
-          <h2 className="font-bold text-purple-800 mb-4">✨ Was du bewiesen hast:</h2>
-          <ul className="text-left text-slate-700 space-y-3">
-            <li className="flex items-start gap-2">
-              <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5" />
-              <span>Vernetzung von Anatomie, Physiologie und Ökologie</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5" />
-              <span>Analytisches Denken und wissenschaftliche Argumentation</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5" />
-              <span>Verständnis komplexer ökologischer Zusammenhänge</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5" />
-              <span>Reflexion ethischer und ökologischer Fragestellungen</span>
-            </li>
-          </ul>
-        </div>
-        
-        {averageScore >= 80 && (
-          <div className="bg-gradient-to-r from-yellow-100 to-amber-100 rounded-xl p-4 mb-6 border-2 border-yellow-400">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Sparkles className="w-6 h-6 text-yellow-600" />
-              <span className="font-bold text-yellow-800">LEGENDEN-STATUS!</span>
-              <Sparkles className="w-6 h-6 text-yellow-600" />
-            </div>
-            <p className="text-yellow-700 text-sm">
-              Über 80% Durchschnitt - Das ist Forschungs-Niveau!
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full">
+        <div className={`rounded-3xl p-8 text-center border-4 ${
+          passed 
+            ? 'bg-gradient-to-br from-yellow-100 to-amber-100 border-yellow-400' 
+            : 'bg-gradient-to-br from-slate-700 to-slate-800 border-slate-500'
+        }`}>
+          <div className="text-6xl mb-4">{passed ? '👑' : '📝'}</div>
+          
+          <h1 className={`text-3xl font-bold mb-4 ${passed ? 'text-yellow-800' : 'text-white'}`}>
+            {passed ? '🎉 Boss-Level gemeistert!' : 'Challenges abgeschlossen'}
+          </h1>
+          
+          <div className={`text-5xl font-bold mb-6 ${passed ? 'text-yellow-600' : 'text-slate-300'}`}>
+            {Math.round(averageScore)}%
           </div>
-        )}
-        
-        <Link href="/">
-          <button className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all flex items-center justify-center gap-2">
-            <Crown className="w-5 h-5" />
-            Zurück zum Lernpfad
-          </button>
-        </Link>
+          
+          <p className={`mb-8 ${passed ? 'text-yellow-700' : 'text-slate-300'}`}>
+            {passed 
+              ? 'Herzlichen Glückwunsch! Du hast die ultimative Denk-Challenge gemeistert. Du verstehst jetzt komplexe Zusammenhänge zwischen Anatomie, Physiologie und Ökologie der Forelle!' 
+              : `Du hast alle Challenges bearbeitet. Für das Boss-Abzeichen brauchst du 50%. Dein Durchschnitt: ${Math.round(averageScore)}%. Versuche es gerne nochmal!`}
+          </p>
+
+          {/* Versuchs-Statistik */}
+          <div className="bg-white/20 rounded-xl p-4 mb-6">
+            <h3 className={`font-bold mb-3 ${passed ? 'text-yellow-800' : 'text-white'}`}>
+              Deine Versuche:
+            </h3>
+            <div className="space-y-2">
+              {bossChallenges.map((challenge, idx) => {
+                const challengeAttempts = attempts[challenge.id] || []
+                const best = challengeAttempts.length > 0 
+                  ? Math.max(...challengeAttempts.map(a => a.score))
+                  : 0
+                return (
+                  <div key={challenge.id} className="flex items-center justify-between text-sm">
+                    <span className={passed ? 'text-yellow-900' : 'text-slate-300'}>
+                      {idx + 1}. {challenge.title.replace(/^[^\s]+\s/, '')}
+                    </span>
+                    <span className={best >= 65 ? 'text-green-400' : best >= 45 ? 'text-amber-400' : 'text-red-400'}>
+                      {challengeAttempts.length} Versuch{challengeAttempts.length !== 1 ? 'e' : ''}, Beste: {best}%
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <Link 
+              href="/" 
+              className={`flex-1 py-3 rounded-xl font-bold transition-colors ${
+                passed 
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white' 
+                  : 'bg-slate-600 hover:bg-slate-700 text-white'
+              }`}
+            >
+              Zurück zum Lernpfad
+            </Link>
+            {!passed && (
+              <Link 
+                href="/quest/forelle/boss" 
+                className="flex-1 py-3 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white"
+                onClick={() => window.location.reload()}
+              >
+                Nochmal versuchen
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

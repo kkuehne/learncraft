@@ -41,7 +41,7 @@ export const learningPath = {
       id: 'boss-arena',
       name: 'Boss Arena',
       emoji: '👑',
-      description: 'Textbasierte Denk-Challenges - Analyse, Vernetzung, Reflexion (300 XP)',
+      description: '3 Experten-Fragen, je 3 Versuche. Gymnasium-Niveau (5. Klasse). 50% zum Bestehen.',
       category: 'boss',
       requiredXP: 350,
       totalXP: 300,

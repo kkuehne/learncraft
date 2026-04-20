@@ -202,9 +202,9 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
         <div className="absolute bottom-12 left-16 w-4 h-4 bg-white/20 rounded-full animate-pulse delay-1000" />
         
         <svg 
-          viewBox="0 0 240 100" 
-          className="w-full h-auto max-w-2xl mx-auto"
-          style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.15))' }}
+          viewBox="0 0 280 80" 
+          className="w-full h-auto max-w-3xl mx-auto"
+          style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.12))' }}
         >
           <defs>
             {/* Realistic trout body gradient - olive to silver */}
@@ -240,195 +240,194 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
             </radialGradient>
           </defs>
           
-          <g transform="translate(20, 10)">
-            {/* Shadow under fish */}
-            <ellipse cx="105" cy="78" rx="85" ry="12" fill="#000" opacity="0.1" />
+          <g transform="translate(15, 8)">
+            {/* Shadow under fish - adjusted for new proportions */}
+            <ellipse cx="130" cy="70" rx="100" ry="8" fill="#000" opacity="0.08" />
             
             {/* --- TAIL FIN (Schwanzflosse) - Most posterior --- */}
             <g>
-              {/* Tail peduncle (narrow part before tail) */}
-              <path d="M 25 45 L 35 45 L 35 55 L 25 55 Z" fill="url(#troutBody)" />
+              {/* Tail peduncle - narrower for streamlined look */}
+              <path d="M 30 38 L 42 38 L 42 48 L 30 48 Z" fill="url(#troutBody)" />
               
-              {/* Tail fin - deeply forked like a trout */}
+              {/* Tail fin - more elongated and forked */}
               <path 
-                d="M 5 50 Q 15 35 20 38 L 35 45 
-                   L 35 55 L 20 62 Q 15 65 5 50 Z" 
+                d="M 5 43 Q 12 30 18 33 L 30 40 
+                   L 30 46 L 18 53 Q 12 56 5 43 Z" 
                 fill="url(#tailGradient)" 
                 stroke="#991b1b" 
-                strokeWidth="0.5"
+                strokeWidth="0.4"
               />
-              {/* Tail rays */}
-              <path d="M 8 50 Q 15 42 20 40" fill="none" stroke="#7f1d1d" strokeWidth="0.3" />
-              <path d="M 8 50 Q 15 45 20 43" fill="none" stroke="#7f1d1d" strokeWidth="0.3" />
-              <path d="M 8 50 Q 15 58 20 60" fill="none" stroke="#7f1d1d" strokeWidth="0.3" />
-              <path d="M 8 50 Q 15 55 20 57" fill="none" stroke="#7f1d1d" strokeWidth="0.3" />
+              {/* Tail rays - finer */}
+              <path d="M 8 43 Q 14 36 18 34" fill="none" stroke="#7f1d1d" strokeWidth="0.25" />
+              <path d="M 8 43 Q 14 40 18 38" fill="none" stroke="#7f1d1d" strokeWidth="0.25" />
+              <path d="M 8 43 Q 14 50 18 52" fill="none" stroke="#7f1d1d" strokeWidth="0.25" />
+              <path d="M 8 43 Q 14 46 18 48" fill="none" stroke="#7f1d1d" strokeWidth="0.25" />
             </g>
             
             {/* --- ANAL FIN (After/Dorsal) --- */}
             <path 
-              d="M 70 65 Q 75 75 80 70 L 78 65 Z" 
+              d="M 85 58 Q 90 66 95 62 L 92 57 Z" 
               fill="url(#finGradient)" 
               stroke="#3f6212" 
-              strokeWidth="0.5"
-              opacity="0.9"
+              strokeWidth="0.4"
+              opacity="0.85"
             />
             
             {/* --- MAIN BODY --- */}
-            {/* Body shape - streamlined trout profile */}
+            {/* Body shape - more streamlined, elongated trout */}
             <path 
-              d="M 35 45 
-                 Q 35 25 70 22 
-                 Q 110 20 150 25
-                 Q 180 30 195 42
-                 Q 200 45 200 50
-                 Q 200 55 195 58
-                 Q 180 70 150 75
-                 Q 110 80 70 78
-                 Q 35 75 35 55
+              d="M 42 40 
+                 Q 42 22 80 18 
+                 Q 130 14 175 20
+                 Q 210 26 225 38
+                 Q 230 42 230 43
+                 Q 230 44 225 48
+                 Q 210 60 175 66
+                 Q 130 72 80 68
+                 Q 42 64 42 46
                  Z" 
               fill="url(#troutBody)" 
               stroke="#3f6212" 
-              strokeWidth="0.8"
+              strokeWidth="0.6"
             />
             
             {/* Scales overlay */}
             <path 
-              d="M 35 45 
-                 Q 35 25 70 22 
-                 Q 110 20 150 25
-                 Q 180 30 195 42
-                 Q 200 45 200 50
-                 Q 200 55 195 58
-                 Q 180 70 150 75
-                 Q 110 80 70 78
-                 Q 35 75 35 55
+              d="M 42 40 
+                 Q 42 22 80 18 
+                 Q 130 14 175 20
+                 Q 210 26 225 38
+                 Q 230 42 230 43
+                 Q 230 44 225 48
+                 Q 210 60 175 66
+                 Q 130 72 80 68
+                 Q 42 64 42 46
                  Z" 
               fill="url(#troutScales)" 
-              opacity="0.5"
+              opacity="0.4"
             />
             
-            {/* Spots/dots typical of trout */}
-            <g fill="#1f2937" opacity="0.7">
-              <ellipse cx="60" cy="35" rx="2" ry="1.5" />
-              <ellipse cx="75" cy="30" rx="1.5" ry="1" />
-              <ellipse cx="90" cy="32" rx="2" ry="1.5" />
-              <ellipse cx="110" cy="28" rx="1.5" ry="1" />
-              <ellipse cx="125" cy="35" rx="2" ry="1.5" />
-              <ellipse cx="140" cy="30" rx="1.5" ry="1" />
-              <ellipse cx="155" cy="38" rx="2" ry="1.5" />
-              <ellipse cx="85" cy="55" rx="1.5" ry="1" />
-              <ellipse cx="100" cy="60" rx="2" ry="1.5" />
-              <ellipse cx="120" cy="58" rx="1.5" ry="1" />
-              <ellipse cx="135" cy="65" rx="2" ry="1.5" />
+            {/* Spots/dots typical of trout - more scattered */}
+            <g fill="#1f2937" opacity="0.6">
+              <ellipse cx="70" cy="28" rx="1.5" ry="1" />
+              <ellipse cx="90" cy="26" rx="1.2" ry="0.8" />
+              <ellipse cx="110" cy="24" rx="1.5" ry="1" />
+              <ellipse cx="135" cy="26" rx="1.2" ry="0.8" />
+              <ellipse cx="155" cy="30" rx="1.5" ry="1" />
+              <ellipse cx="175" cy="32" rx="1.2" ry="0.8" />
+              <ellipse cx="100" cy="50" rx="1.2" ry="0.8" />
+              <ellipse cx="125" cy="52" rx="1.5" ry="1" />
+              <ellipse cx="150" cy="54" rx="1.2" ry="0.8" />
+              <ellipse cx="170" cy="52" rx="1.2" ry="0.8" />
             </g>
             
-            {/* Red spots (parr marks or spawning colors) */}
-            <g fill="#dc2626" opacity="0.5">
-              <circle cx="70" cy="40" r="1.2" />
-              <circle cx="95" cy="45" r="1" />
-              <circle cx="115" cy="42" r="1.2" />
-              <circle cx="130" cy="48" r="1" />
-              <circle cx="145" cy="52" r="1.2" />
+            {/* Red spots - more subtle */}
+            <g fill="#dc2626" opacity="0.4">
+              <circle cx="85" cy="32" r="0.9" />
+              <circle cx="105" cy="35" r="0.8" />
+              <circle cx="125" cy="38" r="0.9" />
+              <circle cx="145" cy="40" r="0.8" />
+              <circle cx="165" cy="42" r="0.9" />
             </g>
             
             {/* --- DORSAL FIN (Rückenflosse) --- */}
             <g>
               <path 
-                d="M 80 22 Q 95 8 110 15 L 115 22 L 105 23 L 85 23 Z" 
+                d="M 95 16 Q 110 6 125 12 L 128 18 L 118 18 L 98 18 Z" 
                 fill="url(#finGradient)" 
                 stroke="#3f6212" 
-                strokeWidth="0.5"
+                strokeWidth="0.4"
               />
               {/* Fin rays */}
-              <path d="M 88 22 L 92 12" fill="none" stroke="#3f6212" strokeWidth="0.3" />
-              <path d="M 95 22 L 100 11" fill="none" stroke="#3f6212" strokeWidth="0.3" />
-              <path d="M 102 22 L 108 13" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 105 18 L 108 10" fill="none" stroke="#3f6212" strokeWidth="0.25" />
+              <path d="M 112 18 L 116 9" fill="none" stroke="#3f6212" strokeWidth="0.25" />
+              <path d="M 119 18 L 124 11" fill="none" stroke="#3f6212" strokeWidth="0.25" />
             </g>
             
-            {/* --- ADIPOSE FIN (small fin between dorsal and tail) --- */}
+            {/* --- ADIPOSE FIN --- */}
             <ellipse 
-              cx="50" cy="25" rx="4" ry="2" 
+              cx="60" cy="18" rx="3" ry="1.5" 
               fill="#4a5d23" 
               stroke="#3f6212" 
-              strokeWidth="0.5"
+              strokeWidth="0.4"
             />
             
             {/* --- PECTORAL FIN (Breast fin) --- */}
             <g>
               <path 
-                d="M 135 70 Q 145 82 155 75 L 150 68 Z" 
+                d="M 160 60 Q 170 70 178 64 L 174 58 Z" 
                 fill="url(#finGradient)" 
                 stroke="#3f6212" 
-                strokeWidth="0.5"
-                opacity="0.9"
+                strokeWidth="0.4"
+                opacity="0.85"
               />
               {/* Fin rays */}
-              <path d="M 142 72 L 148 78" fill="none" stroke="#3f6212" strokeWidth="0.3" />
-              <path d="M 145 70 L 152 76" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 166 62 L 172 67" fill="none" stroke="#3f6212" strokeWidth="0.25" />
+              <path d="M 168 60 L 175 65" fill="none" stroke="#3f6212" strokeWidth="0.25" />
             </g>
             
             {/* --- HEAD --- */}
-            {/* Snout */}
+            {/* Snout - more pointed */}
             <path 
-              d="M 195 42 Q 210 35 215 42 Q 218 45 215 50 Q 210 60 200 55" 
+              d="M 225 38 Q 245 32 250 40 Q 252 43 250 46 Q 245 54 235 50" 
               fill="url(#troutBody)" 
               stroke="#3f6212" 
-              strokeWidth="0.8"
+              strokeWidth="0.6"
             />
             
             {/* Mouth */}
             <path 
-              d="M 210 48 Q 213 48 213 50 Q 213 52 210 52" 
+              d="M 245 44 Q 248 44 248 46 Q 248 48 245 48" 
               fill="none" 
               stroke="#1f2937" 
-              strokeWidth="1"
+              strokeWidth="0.8"
               strokeLinecap="round"
             />
             
             {/* Eye */}
             <g>
-              <ellipse cx="190" cy="40" rx="5" ry="6" fill="#fef3c7" stroke="#1f2937" strokeWidth="0.8" />
-              <circle cx="192" cy="40" r="3" fill="#1f2937" />
-              <circle cx="193" cy="39" r="1" fill="white" />
+              <ellipse cx="218" cy="36" rx="4" ry="5" fill="#fef3c7" stroke="#1f2937" strokeWidth="0.6" />
+              <circle cx="220" cy="36" r="2.5" fill="#1f2937" />
+              <circle cx="221" cy="35" r="0.8" fill="white" />
             </g>
             
-            {/* Gill cover (Kiemendeckel) */}
+            {/* Gill cover (Kiemendeckel) - smaller */}
             <path 
-              d="M 175 35 Q 195 30 198 45 Q 195 60 175 55 Q 165 45 175 35 Z" 
+              d="M 205 32 Q 220 28 223 42 Q 220 54 205 50 Q 198 41 205 32 Z" 
               fill="url(#gillGradient)" 
               stroke="#3f6212" 
-              strokeWidth="0.8"
+              strokeWidth="0.6"
             />
             
             {/* Gill slit line */}
             <path 
-              d="M 178 40 Q 182 45 178 50" 
+              d="M 208 38 Q 211 42 208 46" 
               fill="none" 
               stroke="#7c2d12" 
-              strokeWidth="0.5"
+              strokeWidth="0.4"
               strokeLinecap="round"
             />
             
             {/* --- LATERAL LINE (Seitenlinie) --- */}
             <path 
-              d="M 28 50 Q 60 48 100 50 Q 140 52 170 48" 
+              d="M 35 43 Q 70 41 115 43 Q 160 45 200 42" 
               fill="none" 
               stroke="#fef3c7" 
-              strokeWidth="1.2" 
-              opacity="0.8"
+              strokeWidth="0.9" 
+              opacity="0.7"
               strokeLinecap="round"
             />
             
-            {/* Lateral line sensory pores (small dots) */}
+            {/* Lateral line sensory pores - smaller */}
             <g fill="#374151">
-              <circle cx="45" cy="49.5" r="0.6" />
-              <circle cx="60" cy="49" r="0.6" />
-              <circle cx="75" cy="49.5" r="0.6" />
-              <circle cx="90" cy="50" r="0.6" />
-              <circle cx="105" cy="50.5" r="0.6" />
-              <circle cx="120" cy="50" r="0.6" />
-              <circle cx="135" cy="49.5" r="0.6" />
-              <circle cx="150" cy="49" r="0.6" />
+              <circle cx="55" cy="42.8" r="0.45" />
+              <circle cx="75" cy="42.5" r="0.45" />
+              <circle cx="95" cy="42.8" r="0.45" />
+              <circle cx="115" cy="43" r="0.45" />
+              <circle cx="135" cy="43.2" r="0.45" />
+              <circle cx="155" cy="43" r="0.45" />
+              <circle cx="175" cy="42.5" r="0.45" />
+              <circle cx="192" cy="42" r="0.45" />
             </g>
           </g>
           
@@ -437,101 +436,96 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
             const isLabeled = labeledParts.includes(part.id)
             const isSelected = selectedPart === part.id
             
-            // Adjust coordinates for the new fish position (translate(20, 10))
-            const x = ((part.x / 100) * 200) + 20
-            const y = ((part.y / 100) * 80) + 10
+            // Fine-tuned positions for new streamlined fish proportions
+            let adjustedX = 0, adjustedY = 0
             
-            // Fine-tuned positions for better accuracy
-            let adjustedX = x
-            let adjustedY = y
-            
-            if (part.id === 'kopf') { adjustedX = 210; adjustedY = 45 }
-            if (part.id === 'kiemen') { adjustedX = 175; adjustedY = 45 }
-            if (part.id === 'flosse-ruecken') { adjustedX = 95; adjustedY = 20 }
-            if (part.id === 'flosse-seite') { adjustedX = 90; adjustedY = 50 }
-            if (part.id === 'schwanz') { adjustedX = 25; adjustedY = 50 }
+            if (part.id === 'kopf') { adjustedX = 238; adjustedY = 38 }
+            if (part.id === 'kiemen') { adjustedX = 208; adjustedY = 38 }
+            if (part.id === 'flosse-ruecken') { adjustedX = 110; adjustedY = 15 }
+            if (part.id === 'flosse-seite') { adjustedX = 105; adjustedY = 43 }
+            if (part.id === 'schwanz') { adjustedX = 32; adjustedY = 43 }
             
             return (
               <g key={part.id} className="cursor-pointer" onClick={() => handlePartClick(part.id)}>
-                {/* Hotspot circle */}
+                {/* Hotspot circle - smaller and more subtle */}
                 <circle 
                   cx={adjustedX} 
                   cy={adjustedY} 
-                  r={isLabeled ? 7 : 9} 
+                  r={isLabeled ? 4 : 5} 
                   fill={isLabeled ? '#22c55e' : isSelected ? '#f59e0b' : '#ef4444'}
                   stroke="white"
-                  strokeWidth="2.5"
-                  opacity={isLabeled ? 0.9 : 1}
+                  strokeWidth="1.5"
+                  opacity={isLabeled ? 0.85 : 0.9}
                   style={{ 
-                    filter: isSelected ? 'drop-shadow(0 0 6px #f59e0b)' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+                    filter: isSelected ? 'drop-shadow(0 0 4px #f59e0b)' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))',
                     transition: 'all 0.2s'
                   }}
                 />
                 
-                {/* Pulsing animation for unlabeled parts */}
+                {/* Pulsing animation for unlabeled parts - smaller */}
                 {!isLabeled && !isSelected && (
                   <circle 
                     cx={adjustedX} 
                     cy={adjustedY} 
-                    r={14} 
+                    r={8} 
                     fill="none"
                     stroke="#ef4444"
-                    strokeWidth="2"
-                    opacity="0.5"
+                    strokeWidth="1.5"
+                    opacity="0.4"
                   >
                     <animate 
                       attributeName="r" 
-                      values="12;18;12" 
+                      values="7;11;7" 
                       dur="2s" 
                       repeatCount="indefinite"
                     />
                     <animate 
                       attributeName="opacity" 
-                      values="0.5;0.1;0.5" 
+                      values="0.4;0.1;0.4" 
                       dur="2s" 
                       repeatCount="indefinite"
                     />
                   </circle>
                 )}
                 
-                {/* Label text with background */}
+                {/* Label text - smaller, more compact */}
                 {isLabeled && (
                   <g>
                     <rect 
-                      x={adjustedX - 35} 
-                      y={adjustedY - 22} 
-                      width="70" 
-                      height="14" 
-                      rx="3" 
+                      x={adjustedX - 22} 
+                      y={adjustedY - 14} 
+                      width="44" 
+                      height="10" 
+                      rx="2" 
                       fill="white" 
-                      opacity="0.95"
+                      opacity="0.9"
                       stroke="#22c55e"
-                      strokeWidth="1"
+                      strokeWidth="0.5"
                     />
                     <text 
                       x={adjustedX} 
-                      y={adjustedY - 12} 
+                      y={adjustedY - 7} 
                       textAnchor="middle" 
-                      className="text-xs font-bold"
+                      className="font-medium"
                       fill="#166534"
-                      style={{ fontSize: '7px' }}
+                      style={{ fontSize: '5px' }}
                     >
                       {part.correctLabel}
                     </text>
                   </g>
                 )}
                 
-                {/* Selection indicator with rotating dashed circle */}
+                {/* Selection indicator - smaller */}
                 {isSelected && (
                   <g>
                     <circle 
                       cx={adjustedX} 
                       cy={adjustedY} 
-                      r={16} 
+                      r={9} 
                       fill="none"
                       stroke="#f59e0b"
-                      strokeWidth="2.5"
-                      strokeDasharray="6,3"
+                      strokeWidth="1.5"
+                      strokeDasharray="4,2"
                     >
                       <animateTransform
                         attributeName="transform"
@@ -542,15 +536,15 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
                         repeatCount="indefinite"
                       />
                     </circle>
-                    {/* Glow effect */}
+                    {/* Glow effect - smaller */}
                     <circle 
                       cx={adjustedX} 
                       cy={adjustedY} 
-                      r={20} 
+                      r={12} 
                       fill="none"
                       stroke="#fbbf24"
-                      strokeWidth="1"
-                      opacity="0.3"
+                      strokeWidth="0.8"
+                      opacity="0.25"
                     />
                   </g>
                 )}

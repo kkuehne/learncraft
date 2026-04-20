@@ -1,12 +1,12 @@
 // Forelle-Quest Daten
 
-// Forelle Anatomie-Daten (Außen) - Kopf entfernt, da Teil des durchgehenden Körpers
+// Forelle Anatomie-Daten (Außen) - Alle Flossen beschriftbar
 export const forelleAnatomy = {
   id: 'anatomy',
   name: 'Anatomie',
   title: 'Die Forelle von außen und innen',
   description: 'Beschriftet das schematische Bild der Forelle',
-  totalXP: 50,
+  totalXP: 90,
   parts: [
     {
       id: 'kiemen',
@@ -24,6 +24,33 @@ export const forelleAnatomy = {
       y: 15,
       correctLabel: 'Rückenflosse',
       hint: 'Die Flosse auf dem Rücken zur Stabilisierung',
+      xp: 10
+    },
+    {
+      id: 'fettflosse',
+      name: 'Fettflosse',
+      x: 35,
+      y: 12,
+      correctLabel: 'Fettflosse',
+      hint: 'Kleine Fette Flosse hinter der Rückenflosse',
+      xp: 10
+    },
+    {
+      id: 'flosse-brust',
+      name: 'Brustflosse',
+      x: 70,
+      y: 45,
+      correctLabel: 'Brustflosse',
+      hint: 'Die seitlichen Flossen zur Steuerung',
+      xp: 10
+    },
+    {
+      id: 'flosse-after',
+      name: 'Afterflosse',
+      x: 45,
+      y: 50,
+      correctLabel: 'Afterflosse',
+      hint: 'Die Flosse am Bauch vor dem Schwanz',
       xp: 10
     },
     {

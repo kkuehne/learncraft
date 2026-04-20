@@ -147,13 +147,16 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     if (part) speak(part.hint)
   }
   
-  // Hotspot-Positionen - Kopf entfernt
+  // Hotspot-Positionen - alle Flossen
   const getHotspotPos = (partId: string) => {
     const positions: Record<string, {x: number, y: number}> = {
       'kiemen': { x: 218, y: 40 },
-      'flosse-ruecken': { x: 135, y: 16 },
-      'flosse-seite': { x: 145, y: 45 },
-      'schwanz': { x: 35, y: 48 }
+      'flosse-ruecken': { x: 138, y: 10 },      // Spitze Rückenflosse
+      'fettflosse': { x: 82, y: 15 },           // Fettflosse
+      'flosse-brust': { x: 210, y: 60 },        // Brustflosse
+      'flosse-after': { x: 108, y: 62 },        // Afterflosse
+      'flosse-seite': { x: 145, y: 45 },        // Seitenlinie
+      'schwanz': { x: 35, y: 48 }               // Schwanzflosse
     }
     return positions[partId] || { x: 0, y: 0 }
   }
@@ -235,8 +238,14 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
               <path d="M 12 48 C 18 58 25 60 32 57" fill="none" stroke="#7b1d1d" strokeWidth="0.3" />
             </g>
             
-            {/* Afterflosse */}
-            <path d="M 100 62 C 105 70 112 67 115 62 L 110 58 Z" fill="url(#finGradient)" stroke="#3f6212" strokeWidth="0.4" opacity="0.9" />
+            {/* Afterflosse - größer */}
+            <path 
+              d="M 95 60 C 102 72 112 68 118 61 L 112 54 Z" 
+              fill="url(#finGradient)" 
+              stroke="#3f6212" 
+              strokeWidth="0.5" 
+              opacity="0.9" 
+            />
             
             {/* Körper - durchgehend von Kopf bis Schwanz */}
             <path 
@@ -288,22 +297,42 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
               <circle cx="195" cy="40" r="1.8" fill="none" stroke="#f7fafc" strokeWidth="0.3" opacity="0.5" />
             </g>
             
-            {/* Rückenflosse */}
+            {/* Rückenflosse - größer */}
             <g>
-              <path d="M 115 16 C 130 4 150 8 158 16 L 150 18 L 125 18 Z" fill="url(#finGradient)" stroke="#3f6212" strokeWidth="0.4" />
-              <path d="M 125 18 L 128 8" fill="none" stroke="#3f6212" strokeWidth="0.25" />
-              <path d="M 132 18 L 138 6" fill="none" stroke="#3f6212" strokeWidth="0.25" />
-              <path d="M 140 18 L 150 10" fill="none" stroke="#3f6212" strokeWidth="0.25" />
+              <path 
+                d="M 110 12 C 130 -2 155 4 165 14 L 155 18 L 120 18 Z" 
+                fill="url(#finGradient)" 
+                stroke="#3f6212" 
+                strokeWidth="0.5" 
+              />
+              <path d="M 122 18 L 126 5" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 132 18 L 138 3" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 142 18 L 152 6" fill="none" stroke="#3f6212" strokeWidth="0.3" />
             </g>
             
-            {/* Fettflosse */}
-            <ellipse cx="85" cy="17" rx="4" ry="2" fill="#4a5d23" stroke="#3f6212" strokeWidth="0.4" />
+            {/* Fettflosse - größer und deutlicher */}
+            <ellipse 
+              cx="82" 
+              cy="15" 
+              rx="6" 
+              ry="3" 
+              fill="#4a5d23" 
+              stroke="#3f6212" 
+              strokeWidth="0.5" 
+            />
             
-            {/* Brustflosse */}
+            {/* Brustflosse - größer */}
             <g>
-              <path d="M 195 60 C 205 68 215 64 218 58 L 210 52 Z" fill="url(#finGradient)" stroke="#3f6212" strokeWidth="0.4" opacity="0.9" />
-              <path d="M 200 62 L 208 66" fill="none" stroke="#3f6212" strokeWidth="0.25" />
-              <path d="M 205 60 L 213 64" fill="none" stroke="#3f6212" strokeWidth="0.25" />
+              <path 
+                d="M 190 58 C 205 70 220 65 225 56 L 215 48 Z" 
+                fill="url(#finGradient)" 
+                stroke="#3f6212" 
+                strokeWidth="0.5" 
+                opacity="0.9" 
+              />
+              <path d="M 198 62 L 210 68" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 205 60 L 218 66" fill="none" stroke="#3f6212" strokeWidth="0.3" />
+              <path d="M 212 58 L 222 63" fill="none" stroke="#3f6212" strokeWidth="0.3" />
             </g>
             
             {/* Maul - als Einschnitt in den durchgehenden Körper */}

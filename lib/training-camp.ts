@@ -197,12 +197,101 @@ export const matchGame = {
   ] as MatchPair[]
 }
 
+// Forellen-Steckbrief Daten
+export const forellenSteckbrief = {
+  title: '📋 Forellen-Steckbrief',
+  subtitle: 'Alle wichtigen Daten auf einen Blick',
+  
+  basisDaten: {
+    name: 'Bachforelle',
+    wissenschaftlicherName: 'Salmo trutta fario',
+    familie: 'Lachsfische (Salmonidae)',
+    groesse: '25–50 cm, bis 60 cm möglich',
+    gewicht: '100g – 2kg (Rekorde bis 8kg)',
+    lebensdauer: 'bis 10 Jahre, selten älter',
+    schwierigkeit: 'Anfänger+',
+    xp: 20
+  },
+  
+  lebensraum: {
+    icon: '🏞️',
+    title: 'Lebensraum',
+    items: [
+      'Sauerstoffreiche, klare Fließgewässer',
+      'Kühle Temperaturen: 8–15°C optimal',
+      'Kiesiger oder steiniger Grund',
+      'Strömungsreiche Bereiche mit Verstecken',
+      'Ab 20°C: kritisch, ab 25°C: lebensbedrohlich'
+    ]
+  },
+  
+  nahrung: {
+    icon: '🦟',
+    title: 'Nahrung',
+    items: [
+      'Wasserinsekten und deren Larven',
+      'Kleine Krebstiere (z.B. Gammarus)',
+      'Zooplankton',
+      'Kleinere Fischarten (als Adult)',
+      'Aufsteigende Insekten (Nachts)'
+    ]
+  },
+  
+  fortPflanzung: {
+    icon: '💕',
+    title: 'Fortpflanzung',
+    items: [
+      'Laichzeit: November bis Januar',
+      'Weibchen graben Mulde im Kies',
+      ' bis 10.000 Eier pro Weibchen',
+      'Temperatur: 4–10°C für Entwicklung',
+      'Schlüpfen nach 3–4 Monaten',
+      'Junggänge verstecken sich im Kies'
+    ]
+  },
+  
+  besonderheiten: {
+    icon: '✨',
+    title: 'Besondere Anpassungen',
+    items: [
+      'Gegenstromprinzip in Kiemen: 80% O₂-Wirkungsgrad',
+      'Seitenlinienorgan: Druckwellen-Wahrnehmung',
+      'Schwimmblase: Perfekte Höhenkontrolle',
+      'Fettflosse: Stabilisierung beim Schwimmen',
+      'Tarnfärbung: Anpassung an Umgebung',
+      'Territorialverhalten: Revierverteidigung'
+    ]
+  },
+  
+  bedrohungen: {
+    icon: '⚠️',
+    title: 'Bedrohungen',
+    items: [
+      'Klimawandel: Erwärmung der Gewässer',
+      'Überfischung durch Freizeitangler',
+      'Gewässerverschmutzung (Dünger, Pestizide)',
+      'Bewirtschaftung: Flussbegradigungen',
+      'Invasive Arten: Amerikanische Regenbogenforelle',
+      'Genetische Vermischung durch Zuchtforellen'
+    ]
+  },
+  
+  funFacts: [
+    { emoji: '👑', text: 'Wird als "Königin der Bäche" bezeichnet' },
+    { emoji: '🧪', text: 'Bioindikator für sauberes Wasser' },
+    { emoji: '🌍', text: 'Ursprünglich in Europa und Vorderasien beheimatet' },
+    { emoji: '🏊', text: 'Kann kleine Wasserfälle hinauf springen' },
+    { emoji: '🦅', text: 'Hauptfeinde: Reiher, Eisvögel, Fischotter' },
+    { emoji: '💪', text: 'Sehr kämpferisch bei der Angel – beliebter Sportfisch' }
+  ]
+}
+
 // Training Camp Station Daten für den Lernpfad
 export const trainingCampData = {
   id: 'training-camp',
   name: 'Training Camp',
   emoji: '🏕️',
-  description: 'Sanfter Einstieg mit Habitat-Tour, Audio-Fakten und Match-Spielen (kein Druck!)',
+  description: 'Sanfter Einstieg mit Habitat-Tour, Audio-Fakten, Match-Spiel und Steckbrief (80 XP)',
   totalXP: 60, // Leichter XP-Gewinn ohne Stress
   activities: [
     { id: 'habitat-tour', name: 'Habitat Tour', xp: 20 },

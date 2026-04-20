@@ -7,10 +7,10 @@ export const learningPath = {
       id: 'training-camp',
       name: 'Training Camp',
       emoji: '🏕️',
-      description: 'Sanfter Einstieg: Habitat-Tour, Audio-Wissen, Match-Spiel (60 XP)',
+      description: 'Sanfter Einstieg: Tour, Wissen, Match-Spiel, Steckbrief (80 XP)',
       category: 'theorie',
       requiredXP: 0,
-      totalXP: 60,
+      totalXP: 80,
       locked: false,
       color: '#22c55e'
     },

@@ -6,11 +6,12 @@ import { KnowledgeSnippets } from '@/components/knowledge-snippets'
 import { MatchLearn } from '@/components/match-learn'
 import { addXP } from '@/lib/xp'
 import { trainingCampData } from '@/lib/training-camp'
-import { Map, BookOpen, Puzzle, ChevronLeft, CheckCircle } from 'lucide-react'
+import { ForellenSteckbrief } from '@/components/forellen-steckbrief'
+import { Map, BookOpen, Puzzle, FileText, ChevronLeft, CheckCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-type TabId = 'habitat' | 'snippets' | 'match'
+type TabId = 'habitat' | 'snippets' | 'match' | 'steckbrief'
 
 export default function TrainingCampPage() {
   const [activeTab, setActiveTab] = useState<TabId>('habitat')
@@ -25,7 +26,7 @@ export default function TrainingCampPage() {
     }
   }
 
-  const allCompleted = completedActivities.size === 3
+  const allCompleted = completedActivities.size === 4
 
   const tabs = [
     { 
@@ -51,6 +52,14 @@ export default function TrainingCampPage() {
       icon: <Puzzle className="w-5 h-5" />, 
       completedIcon: <CheckCircle className="w-5 h-5 text-green-500" />,
       activeColor: 'text-blue-700'
+    },
+    { 
+      id: 'steckbrief' as TabId, 
+      label: 'Steckbrief', 
+      mobileLabel: 'Steckbrief',
+      icon: <FileText className="w-5 h-5" />, 
+      completedIcon: <CheckCircle className="w-5 h-5 text-green-500" />,
+      activeColor: 'text-teal-700'
     },
   ]
 
@@ -82,7 +91,7 @@ export default function TrainingCampPage() {
           <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 max-w-md mx-auto">
             <div className="flex items-center justify-between mb-2">
               <span className="text-white font-medium">
-                Fortschritt: {completedActivities.size} / 3 Aktivitäten
+                Fortschritt: {completedActivities.size} / 4 Aktivitäten
               </span>
               <span className="text-yellow-400 font-bold">{totalXP} XP</span>
             </div>
@@ -90,7 +99,7 @@ export default function TrainingCampPage() {
               <motion.div 
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full"
                 initial={{ width: 0 }}
-                animate={{ width: `${(completedActivities.size / 3) * 100}%` }}
+                animate={{ width: `${(completedActivities.size / 4) * 100}%` }}
                 transition={{ duration: 0.5 }}
               />
             </div>
@@ -99,7 +108,7 @@ export default function TrainingCampPage() {
 
         {/* Custom Tabs */}
         <div className="space-y-6">
-          <div className="grid grid-cols-3 bg-white/10 backdrop-blur-sm p-2 rounded-2xl">
+          <div className="flex flex-wrap gap-2 bg-white/10 backdrop-blur-sm p-2 rounded-2xl">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id
               const isCompleted = completedActivities.has(tab.id)
@@ -140,6 +149,9 @@ export default function TrainingCampPage() {
               )}
               {activeTab === 'match' && (
                 <MatchLearn onComplete={(xp) => handleActivityComplete('match', xp)} />
+              )}
+              {activeTab === 'steckbrief' && (
+                <ForellenSteckbrief onComplete={(xp) => handleActivityComplete('steckbrief', xp)} />
               )}
             </motion.div>
           </AnimatePresence>

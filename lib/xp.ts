@@ -13,6 +13,7 @@ export interface UserData {
   seenMasterCelebration?: {
     anatomy?: boolean
     physiology?: boolean
+    theology?: boolean
   }
 }
 
@@ -63,7 +64,7 @@ export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 
 }
 
 // Mark master celebration as seen - prevents repeated celebration
-export function markMasterCelebrationSeen(type: 'anatomy' | 'physiology' = 'anatomy'): void {
+export function markMasterCelebrationSeen(type: 'anatomy' | 'physiology' | 'theology' = 'anatomy'): void {
   const user = getUserData()
   if (!user.seenMasterCelebration) {
     user.seenMasterCelebration = {}
@@ -73,7 +74,7 @@ export function markMasterCelebrationSeen(type: 'anatomy' | 'physiology' = 'anat
 }
 
 // Check if master celebration was already shown
-export function hasSeenMasterCelebration(type: 'anatomy' | 'physiology' = 'anatomy'): boolean {
+export function hasSeenMasterCelebration(type: 'anatomy' | 'physiology' | 'theology' = 'anatomy'): boolean {
   const user = getUserData()
   return user.seenMasterCelebration?.[type] === true
 }

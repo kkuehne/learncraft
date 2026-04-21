@@ -154,7 +154,7 @@ export function WildVsZuchtModule({ onComplete, isCompleted }: WildVsZuchtModule
       </div>
 
       {showReward && (
-        <XPReward amount={40} reason="Wild-vs-Zucht-Experte!" />
+        <XPReward amount={40} show={true} message="Wild-vs-Zucht-Experte!" />
       )}
     </div>
   )

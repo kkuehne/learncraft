@@ -119,7 +119,7 @@ export function TemperaturModule({ onComplete, isCompleted }: TemperaturModulePr
       </div>
 
       {showReward && (
-        <XPReward amount={35} reason="Temperatur-Experiment abgeschlossen!" />
+        <XPReward amount={35} show={true} message="Temperatur-Experiment abgeschlossen!" />
       )}
     </div>
   )

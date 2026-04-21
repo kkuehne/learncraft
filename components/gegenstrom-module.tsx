@@ -118,7 +118,7 @@ export function GegenstromModule({ onComplete, isCompleted }: GegenstromModulePr
 
       {/* XP Reward Animation */}
       {showReward && (
-        <XPReward amount={40} reason="Gegenstromprinzip gemeistert!" />
+        <XPReward amount={40} show={true} message="Gegenstromprinzip gemeistert!" />
       )}
     </div>
   )

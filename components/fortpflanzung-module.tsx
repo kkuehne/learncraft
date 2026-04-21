@@ -132,7 +132,7 @@ export function FortpflanzungModule({ onComplete, isCompleted }: FortpflanzungMo
       </div>
 
       {showReward && (
-        <XPReward amount={35} reason="Fortpflanzung gemeistert!" />
+        <XPReward amount={35} show={true} message="Fortpflanzung gemeistert!" />
       )}
     </div>
   )

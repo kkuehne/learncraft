@@ -43,7 +43,8 @@ export function QuizComponent({ questions, moduleId, onComplete, xp }: QuizCompo
 
   const handleNext = () => {
     if (isLastQuestion) {
-      const passed = score + (selectedAnswer === question.correct ? 1 : 0) >= Math.ceil(questions.length * 0.6)
+      const finalScore = score + (selectedAnswer === question.correct ? 1 : 0)
+      const passed = finalScore >= Math.ceil(questions.length * 0.6)
       
       // Add XP if passed and first time
       if (passed) {
@@ -51,9 +52,6 @@ export function QuizComponent({ questions, moduleId, onComplete, xp }: QuizCompo
       }
       
       setQuizComplete(true)
-      setTimeout(() => {
-        onComplete(passed)
-      }, 1500)
     } else {
       setCurrentQuestion(currentQuestion + 1)
       setSelectedAnswer(null)
@@ -70,6 +68,55 @@ export function QuizComponent({ questions, moduleId, onComplete, xp }: QuizCompo
   }
 
   const progress = ((currentQuestion + (showExplanation ? 1 : 0)) / questions.length) * 100
+
+  // Show completion screen
+  if (quizComplete) {
+    const finalScore = score + (selectedAnswer === question.correct ? 1 : 0)
+    const passed = finalScore >= Math.ceil(questions.length * 0.6)
+    
+    return (
+      <div className="max-w-2xl mx-auto animate-fadeIn">
+        <div className="bg-white/10 rounded-2xl p-8 text-center">
+          <div className="text-6xl mb-4">{passed ? '🎉' : '🔄'}</div>
+          <h3 className="text-2xl font-bold text-white mb-2">
+            {passed ? 'Quiz geschafft!' : 'Nicht ganz...'}
+          </h3>
+          <p className="text-cyan-200 mb-4">
+            Du hast {finalScore} von {questions.length} Fragen richtig beantwortet.
+          </p>
+          
+          {passed ? (
+            <div className="space-y-3">
+              <div className="text-3xl font-bold text-yellow-400">+{xp} XP</div>
+              <button
+                onClick={() => onComplete(true)}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-xl font-bold hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg"
+              >
+                Weiter →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-red-300 text-sm">Mindestens 60% richtig für XP-Belohnung</p>
+              <button
+                onClick={handleRetry}
+                className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-xl font-bold hover:from-orange-600 hover:to-red-600 transition-all shadow-lg mx-auto"
+              >
+                <RefreshCcw className="w-5 h-5" />
+                Nochmal versuchen
+              </button>
+              <button
+                onClick={() => onComplete(false)}
+                className="text-cyan-300 hover:text-white text-sm underline"
+              >
+                Zurück zum Lernpfad
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-2xl mx-auto">

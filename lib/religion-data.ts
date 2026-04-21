@@ -143,7 +143,7 @@ export const religionQuest = {
         {
           id: 'r-s2',
           question: 'Wie erschien Gott Moses zum ersten Mal?',
-          options: 'In einem Traum', 'In einem brennenden Dornbusch', 'Durch einen Engel'],
+          options: ['In einem Traum', 'In einem brennenden Dornbusch', 'Durch einen Engel'],
           correctAnswer: 1,
           hint: 'Der Busch brannte, wurde aber nicht verzehrt.',
           xp: 30

@@ -58,7 +58,7 @@ export function TemperaturModule({ onComplete, isCompleted }: TemperaturModulePr
       <div className="bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-2xl p-6 mb-6">
         <div className="text-center mb-4">
           <span className="text-4xl">🌡️</span>
-          <h3 className="text-xl font-bold text-white mt-2">{Temperatur-Experiment}</h3>
+          <h3 className="text-xl font-bold text-white mt-2">Temperatur-Experiment</h3>
         </div>
 
         <div className="mb-6">

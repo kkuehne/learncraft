@@ -40,7 +40,9 @@ export function Quiz({ task, onComplete }: QuizProps) {
     
     if (correct) {
       addXP(task.xp, task.id)
-      speak(getRandomResponse(professorEich.correct))
+      // Audio: Erklärung statt nur "Richtig!"
+      const explanation = task.hint || getRandomResponse(professorEich.correct)
+      speak(explanation)
     } else {
       speak(getRandomResponse(professorEich.wrong))
     }
@@ -53,7 +55,7 @@ export function Quiz({ task, onComplete }: QuizProps) {
         setShowResult(false)
         setIsCorrect(false)
       }
-    }, 1500)
+    }, correct && task.hint ? 3500 : 1500) // Längere Pause bei Erklärung
   }
   
   return (

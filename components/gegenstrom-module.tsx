@@ -34,6 +34,11 @@ export function GegenstromModule({ onComplete, isCompleted }: GegenstromModulePr
         onComplete()
         setShowReward(false)
       }, 2000)
+    } else {
+      // Quiz nicht bestanden - zurück zum ersten Schritt oder direkt abschließen
+      // Hier: Einfach das Quiz schließen und als nicht-bestanden markieren
+      setShowQuiz(false)
+      setCurrentStep(0)
     }
   }
 

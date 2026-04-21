@@ -26,6 +26,9 @@ export function WildVsZuchtModule({ onComplete, isCompleted }: WildVsZuchtModule
         onComplete()
         setShowReward(false)
       }, 2000)
+    } else {
+      // Quiz nicht bestanden - zurück zur Vergleichsansicht
+      setShowQuiz(false)
     }
   }
 

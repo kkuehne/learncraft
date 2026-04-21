@@ -26,6 +26,9 @@ export function FortpflanzungModule({ onComplete, isCompleted }: FortpflanzungMo
         onComplete()
         setShowReward(false)
       }, 2000)
+    } else {
+      // Quiz nicht bestanden - zurück zur Timeline
+      setShowQuiz(false)
     }
   }
 

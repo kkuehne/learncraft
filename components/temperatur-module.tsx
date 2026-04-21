@@ -30,6 +30,9 @@ export function TemperaturModule({ onComplete, isCompleted }: TemperaturModulePr
         onComplete()
         setShowReward(false)
       }, 2000)
+    } else {
+      // Quiz nicht bestanden - zurück zum Experiment
+      setShowQuiz(false)
     }
   }
 

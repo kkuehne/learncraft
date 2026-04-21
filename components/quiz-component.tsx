@@ -43,14 +43,8 @@ export function QuizComponent({ questions, moduleId, onComplete, xp }: QuizCompo
 
   const handleNext = () => {
     if (isLastQuestion) {
-      // Add final question score before completing
-      const finalScore = score + (selectedAnswer === question.correct ? 1 : 0)
-      const passed = finalScore >= Math.ceil(questions.length * 0.6)
-      
-      // Update score state for display
-      if (selectedAnswer === question.correct) {
-        setScore(score + 1)
-      }
+      // Score was already updated in handleCheck, just use current score
+      const passed = score >= Math.ceil(questions.length * 0.6)
       
       // Add XP if passed and first time
       if (passed) {

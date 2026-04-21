@@ -5,12 +5,15 @@ const STORAGE_KEY = 'learncraft-user'
 export interface UserData {
   xp: number
   completedTasks: string[]
-  completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss')[]
+  completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'gegenstrom' | 'temperatur' | 'fortpflanzung' | 'wild-vs-zucht' | 'boss')[]
   labeledParts?: {
     anatomy?: string[]
     innerOrgans?: string[]
   }
-  seenMasterCelebration?: boolean
+  seenMasterCelebration?: {
+    anatomy?: boolean
+    physiology?: boolean
+  }
 }
 
 export function getUserData(): UserData {
@@ -51,7 +54,7 @@ export function addXP(amount: number, taskId: string): { newXP: number; levelUp:
   }
 }
 
-export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'boss'): void {
+export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'gegenstrom' | 'temperatur' | 'fortpflanzung' | 'wild-vs-zucht' | 'boss'): void {
   const user = getUserData()
   if (!user.completedLevels.includes(level)) {
     user.completedLevels.push(level)
@@ -60,16 +63,19 @@ export function completeLevel(level: 'bronze' | 'silver' | 'gold' | 'anatomy' | 
 }
 
 // Mark master celebration as seen - prevents repeated celebration
-export function markMasterCelebrationSeen(): void {
+export function markMasterCelebrationSeen(type: 'anatomy' | 'physiology' = 'anatomy'): void {
   const user = getUserData()
-  user.seenMasterCelebration = true
+  if (!user.seenMasterCelebration) {
+    user.seenMasterCelebration = {}
+  }
+  user.seenMasterCelebration[type] = true
   saveUserData(user)
 }
 
 // Check if master celebration was already shown
-export function hasSeenMasterCelebration(): boolean {
+export function hasSeenMasterCelebration(type: 'anatomy' | 'physiology' = 'anatomy'): boolean {
   const user = getUserData()
-  return user.seenMasterCelebration === true
+  return user.seenMasterCelebration?.[type] === true
 }
 
 // Save labeled parts for anatomy

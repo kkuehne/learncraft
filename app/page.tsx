@@ -36,7 +36,11 @@ export default function Home() {
         break
       case 'anatomy-lab':
         // Anatomie Lab enthält alle Animationen
-        window.location.href = '/quest/forelle/anatomy'
+        window.location.href = '/quest/forelle/anatomy-lab'
+        break
+      case 'physiology-lab':
+        // Physiologie Lab - 4 Module mit Quiz
+        window.location.href = '/quest/forelle/physiology-lab'
         break
       case 'quiz':
         // Quiz enthält Bronze, Silber, Gold

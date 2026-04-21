@@ -38,6 +38,18 @@ export const learningPath = {
       color: '#f59e0b'
     },
     {
+      id: 'physiology-lab',
+      name: 'Physiologie Lab',
+      emoji: '🧪',
+      description: 'Gegenstromprinzip, Temperatur, Fortpflanzung, Wild-vs-Zucht (150 XP)',
+      category: 'praxis',
+      requiredXP: 0,
+      totalXP: 150,
+      locked: false,
+      color: '#0d9488',
+      route: '/quest/forelle/physiology-lab'
+    },
+    {
       id: 'boss-arena',
       name: 'Boss Arena',
       emoji: '👑',

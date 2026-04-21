@@ -12,7 +12,8 @@ export const religionLearningPath = {
       requiredXP: 0,
       totalXP: 80,
       locked: false,
-      color: '#22c55e'
+      color: '#22c55e',
+      route: '/quest/religion/training-camp'
     },
     {
       id: 'theology-lab',
@@ -35,7 +36,8 @@ export const religionLearningPath = {
       requiredXP: 0,
       totalXP: 500,
       locked: false,
-      color: '#f59e0b'
+      color: '#f59e0b',
+      route: '/quest/religion/quiz'
     },
     {
       id: 'religion-boss',

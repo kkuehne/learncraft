@@ -22,10 +22,7 @@ export function FortpflanzungModule({ onComplete, isCompleted }: FortpflanzungMo
   const handleQuizComplete = (passed: boolean) => {
     if (passed) {
       setShowReward(true)
-      setTimeout(() => {
-        onComplete()
-        setShowReward(false)
-      }, 2000)
+      onComplete()
     } else {
       // Quiz nicht bestanden - zurück zur Timeline
       setShowQuiz(false)

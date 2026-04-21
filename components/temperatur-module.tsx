@@ -26,10 +26,7 @@ export function TemperaturModule({ onComplete, isCompleted }: TemperaturModulePr
   const handleQuizComplete = (passed: boolean) => {
     if (passed) {
       setShowReward(true)
-      setTimeout(() => {
-        onComplete()
-        setShowReward(false)
-      }, 2000)
+      onComplete()
     } else {
       // Quiz nicht bestanden - zurück zum Experiment
       setShowQuiz(false)

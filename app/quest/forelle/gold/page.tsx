@@ -78,7 +78,7 @@ export default function GoldLevel() {
             <p>11. Mai 2026</p>
           </div>
           
-          <Link href="/" className="inline-flex items-center gap-2 bg-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-yellow-700 text-lg">
+          <Link href="/quiz" className="inline-flex items-center gap-2 bg-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-yellow-700 text-lg">
             <Check size={24} />
             Zurück zur Übersicht
           </Link>

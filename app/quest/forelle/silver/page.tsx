@@ -63,7 +63,7 @@ export default function SilverLevel() {
           <p className="text-gray-700 mb-6">Du hast {level.totalXP} XP verdient und die inneren Organe gemeistert!</p>
           
           <div className="flex gap-4 justify-center">
-            <Link href="/" className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">
+            <Link href="/quiz" className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">
               <Check size={20} />
               Zurück
             </Link>

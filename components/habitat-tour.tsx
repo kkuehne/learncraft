@@ -269,6 +269,12 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
                 transition={{ repeat: Infinity, duration: 1 }}
                 className="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-md mx-4"
               >
+                <button
+                  onClick={() => setCompleted(false)}
+                  className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 p-2"
+                >
+                  ✕
+                </button>
                 <div className="text-6xl mb-4">🎉</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">
                   Habitat entdeckt!
@@ -279,6 +285,12 @@ export function HabitatTour({ onComplete }: HabitatTourProps) {
                 <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold py-3 px-6 rounded-full">
                   +20 XP!
                 </div>
+                <button
+                  onClick={() => setCompleted(false)}
+                  className="mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  Weiter →
+                </button>
               </motion.div>
             </motion.div>
           )}

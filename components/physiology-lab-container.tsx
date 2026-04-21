@@ -34,9 +34,15 @@ export function PhysiologyLabContainer({ onComplete }: PhysiologyLabContainerPro
         setTimeout(() => {
           setShowMasterModal(true)
         }, 500)
+      } else {
+        // Auto-switch to next incomplete module
+        const currentIndex = physiologyModules.findIndex(m => m.id === moduleId)
+        const nextModule = physiologyModules.slice(currentIndex + 1).find(m => !newCompleted.has(m.id))
+        if (nextModule) {
+          setActiveTab(nextModule.id)
+        }
       }
     }
-    onComplete?.(true)
   }
 
   const handleCloseMasterModal = () => {

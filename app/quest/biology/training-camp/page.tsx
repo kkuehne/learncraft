@@ -72,7 +72,7 @@ export default function TrainingCampPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <Link href="/">
+          <Link href="/biomes/biology">
             <button className="flex items-center gap-2 text-emerald-200 hover:text-white transition-colors mb-4">
               <ChevronLeft className="w-5 h-5" />
               Zurück zum Lernpfad
@@ -167,7 +167,7 @@ export default function TrainingCampPage() {
             <div className="text-5xl mb-3">🎓</div>
             <h2 className="text-2xl font-bold mb-2">Training Camp gemeistert!</h2>
             <p className="mb-4">Du bist bereit für die nächsten Stationen!</p>
-            <Link href="/">
+            <Link href="/biomes/biology">
               <button className="bg-white text-orange-600 font-bold py-3 px-8 rounded-full hover:scale-105 transition-transform">
                 Weiter zum Lernpfad →
               </button>

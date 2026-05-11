@@ -29,7 +29,7 @@ export default function GoldLevel() {
           <h1 className="text-2xl font-bold text-yellow-800 mb-4">Gold-Level gesperrt</h1>
           <p className="text-yellow-700 mb-6">Schließe erst das Silber-Level ab!</p>
           
-          <Link href="/quest/forelle/silver"
+          <Link href="/quest/biology/silver"
             className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700"
           >
             Zum Silber-Level →
@@ -78,7 +78,7 @@ export default function GoldLevel() {
             <p>11. Mai 2026</p>
           </div>
           
-          <Link href="/quiz" className="inline-flex items-center gap-2 bg-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-yellow-700 text-lg">
+          <Link href="/quest/biology/quiz" className="inline-flex items-center gap-2 bg-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-yellow-700 text-lg">
             <Check size={24} />
             Zurück zur Übersicht
           </Link>
@@ -92,7 +92,7 @@ export default function GoldLevel() {
       <XPBar />
       
       <div className="mb-6 flex items-center gap-4">
-        <Link href="/" className="text-blue-600 hover:underline">← Zurück</Link>
+        <Link href="/biomes/biology" className="text-blue-600 hover:underline">← Zurück</Link>
         <span className="text-sm text-gray-500">|</span>
         <span className="text-sm text-yellow-600">✓✓ Bronze & Silber abgeschlossen</span>
       </div>

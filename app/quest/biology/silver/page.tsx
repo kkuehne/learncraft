@@ -29,7 +29,7 @@ export default function SilverLevel() {
           <h1 className="text-2xl font-bold text-gray-700 mb-4">Silber-Level gesperrt</h1>
           <p className="text-gray-600 mb-6">Schließe erst das Bronze-Level ab!</p>
           
-          <Link href="/quest/forelle/bronze"
+          <Link href="/quest/biology/bronze"
             className="inline-flex items-center gap-2 bg-yellow-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-700"
           >
             Zum Bronze-Level →
@@ -63,11 +63,11 @@ export default function SilverLevel() {
           <p className="text-gray-700 mb-6">Du hast {level.totalXP} XP verdient und die inneren Organe gemeistert!</p>
           
           <div className="flex gap-4 justify-center">
-            <Link href="/quiz" className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">
+          <Link href="/quest/biology/quiz" className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">
               <Check size={20} />
               Zurück
             </Link>
-            <Link href="/quest/forelle/gold"
+            <Link href="/quest/biology/gold"
               className="inline-flex items-center gap-2 bg-yellow-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-yellow-700"
             >
               Zum Gold-Level →
@@ -83,7 +83,7 @@ export default function SilverLevel() {
       <XPBar />
       
       <div className="mb-6 flex items-center gap-4">
-        <Link href="/" className="text-blue-600 hover:underline">← Zurück</Link>
+        <Link href="/biomes/biology" className="text-blue-600 hover:underline">← Zurück</Link>
         <span className="text-sm text-gray-500">|</span>
         <span className="text-sm text-yellow-600">✓ Bronze abgeschlossen</span>
       </div>

@@ -24,7 +24,7 @@ export const learningPath = {
       totalXP: 170,
       locked: false,
       color: '#3b82f6',
-      route: '/quest/forelle/anatomy-lab'
+      route: '/quest/biology/anatomy-lab'
     },
     {
       id: 'quiz',
@@ -47,7 +47,7 @@ export const learningPath = {
       totalXP: 150,
       locked: false,
       color: '#0d9488',
-      route: '/quest/forelle/physiology-lab'
+      route: '/quest/biology/physiology-lab'
     },
     {
       id: 'boss-arena',

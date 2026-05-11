@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ChevronLeft, Fish, Microscope, Scroll, Crown } from 'lucide-react'
-import { learningPath } from '@/lib/data'
-import { getUserData, getTotalXP } from '@/lib/xp'
+import { getBiomeById } from '@/lib/biomes'
+import { getUserData } from '@/lib/xp'
+import { useParams } from 'next/navigation'
 
-type StationId = 'training-camp' | 'anatomy-lab' | 'physiology-lab' | 'quiz' | 'boss-arena'
-
-export default function BiologyBiomePage() {
+export default function BiomePage() {
+  const params = useParams()
+  const biomeId = params.biomeId as string
+  const biome = getBiomeById(biomeId)
+  
   const [userXP, setUserXP] = useState(0)
   const [completedLevels, setCompletedLevels] = useState<string[]>([])
   const [mounted, setMounted] = useState(false)
@@ -21,9 +24,9 @@ export default function BiologyBiomePage() {
     setMounted(true)
   }, [])
   
-  if (!mounted) {
+  if (!mounted || !biome) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-cyan-900 to-blue-950">
+      <div className={`min-h-screen bg-gradient-to-b ${biome?.color || 'from-slate-900 via-purple-900 to-slate-900'}`}>
         <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
           <div className="animate-pulse bg-white/10 rounded-xl h-96 w-full max-w-2xl"></div>
         </div>
@@ -31,24 +34,25 @@ export default function BiologyBiomePage() {
     )
   }
 
-  const getStationIcon = (id: StationId) => {
+  const getStationIcon = (id: string) => {
     switch (id) {
       case 'training-camp': return <Fish className="w-6 h-6" />
       case 'anatomy-lab': return <Microscope className="w-6 h-6" />
       case 'physiology-lab': return <Microscope className="w-6 h-6" />
       case 'quiz': return <Scroll className="w-6 h-6" />
       case 'boss-arena': return <Crown className="w-6 h-6" />
+      default: return <Fish className="w-6 h-6" />
     }
   }
 
   const isStationCompleted = (id: string) => completedLevels.includes(id)
-  const isStationLocked = (station: typeof learningPath.stations[0]) => {
+  const isStationLocked = (station: any) => {
     if (!station.requiredXP) return false
     return userXP < station.requiredXP
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 via-cyan-900 to-blue-950">
+    <div className={`min-h-screen bg-gradient-to-b ${biome.color}`}>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div 
@@ -57,19 +61,19 @@ export default function BiologyBiomePage() {
           className="mb-8"
         >
           <Link href="/">
-            <button className="flex items-center gap-2 text-cyan-200 hover:text-white transition-colors mb-6">
+            <button className={`flex items-center gap-2 text-${biome.accent}-200 hover:text-white transition-colors mb-6`}>
               <ChevronLeft className="w-5 h-5" />
               Zurück zur Übersicht
             </button>
           </Link>
           
           <div className="text-center">
-            <div className="text-6xl mb-4">🐟</div>
+            <div className="text-6xl mb-4">{biome.emoji}</div>
             <h1 className="text-4xl font-bold text-white mb-2">
-              Biologie
+              {biome.name}
             </h1>
-            <p className="text-cyan-200 max-w-xl mx-auto">
-              Die Bachforelle - Anatomie, Physiologie und Lebensweise
+            <p className={`text-${biome.accent}-200 max-w-xl mx-auto`}>
+              {biome.description}
             </p>
           </div>
         </motion.div>
@@ -93,21 +97,16 @@ export default function BiologyBiomePage() {
               transition={{ duration: 0.8, delay: 0.3 }}
             />
           </div>
-          <p className="text-cyan-200 text-sm mt-2 text-center">
+          <p className={`text-${biome.accent}-200 text-sm mt-2 text-center`}>
             {userXP >= 350 ? '🎉 Boss Arena freigeschaltet!' : `${350 - userXP} XP bis zur Boss Arena`}
           </p>
         </motion.div>
 
         {/* Learning Path Stations */}
         <div className="max-w-2xl mx-auto space-y-4">
-          {learningPath.stations.map((station, index) => {
+          {biome.learningPath.stations.map((station: any, index: number) => {
             const completed = isStationCompleted(station.id)
             const locked = isStationLocked(station)
-            
-            // Transform old routes to new /quest/biology/... structure
-            let targetRoute = station.route || '#'
-            if (targetRoute === '/training-camp') targetRoute = '/quest/biology/training-camp'
-            if (targetRoute === '/quiz') targetRoute = '/quest/biology/quiz'
             
             return (
               <motion.div
@@ -131,18 +130,18 @@ export default function BiologyBiomePage() {
                     </div>
                   </div>
                 ) : (
-                  <Link href={targetRoute}>
+                  <Link href={station.route}>
                     <div 
                       className={`group relative overflow-hidden rounded-2xl p-6 cursor-pointer
                         transition-all duration-300 hover:scale-[1.02] hover:shadow-xl
                         ${completed 
-                          ? 'bg-gradient-to-r from-green-500/30 to-emerald-500/30 border-2 border-green-400/50' 
-                          : 'bg-gradient-to-r from-cyan-600/30 to-blue-600/30 border-2 border-cyan-400/50 hover:border-cyan-300'
+                          ? 'bg-gradient-to-r from-green-500/30 to-emerald-500 border-2 border-green-400/50' 
+                          : `bg-gradient-to-r from-${biome.accent}-600/30 to-blue-600/30 border-2 border-${biome.accent}-400/50 hover:border-${biome.accent}-300`
                         }`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-xl ${completed ? 'bg-green-500/30' : 'bg-cyan-500/30'}`}>
-                          {getStationIcon(station.id as StationId)}
+                        <div className={`p-3 rounded-xl ${completed ? 'bg-green-500/30' : `bg-${biome.accent}-500/30`}`}>
+                          {getStationIcon(station.id)}
                         </div>
                         
                         <div className="flex-1">
@@ -154,11 +153,11 @@ export default function BiologyBiomePage() {
                             {completed && <span className="text-green-400 text-sm">✓ Abgeschlossen</span>}
                           </div>
                           
-                          <p className="text-cyan-200/80 text-sm mt-1">{station.description}</p>
+                          <p className={`text-${biome.accent}-200/80 text-sm mt-1`}>{station.description}</p>
                           
                           <div className="flex items-center gap-4 mt-2">
                             <span className="text-yellow-400 text-sm font-medium">+{station.totalXP} XP</span>
-                            {!completed && <span className="text-cyan-300 text-sm">Klicke zum Starten →</span>}
+                            {!completed && <span className={`text-${biome.accent}-300 text-sm`}>Klicke zum Starten →</span>}
                           </div>
                         </div>
                       </div>

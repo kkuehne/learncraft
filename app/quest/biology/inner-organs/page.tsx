@@ -83,7 +83,7 @@ export default function InnerOrgansLevel() {
               <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-6">
                 <p className="text-amber-800">
                   🎯 <strong>Noch ein Schritt:</strong> Beschrifte auch die 
-                  <Link href="/quest/forelle/anatomy" className="underline hover:text-amber-900">
+                  <Link href="/quest/biology/anatomy" className="underline hover:text-amber-900">
                     äußere Anatomie →
                   </Link>
                   <br />
@@ -101,7 +101,7 @@ export default function InnerOrgansLevel() {
             )}
             
             <Link 
-              href="/" 
+              href="/biomes/biology" 
               className="inline-flex items-center gap-2 bg-rose-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-rose-700"
             >
               <Check size={20} />
@@ -119,7 +119,7 @@ export default function InnerOrgansLevel() {
         <XPBar />
         
         <div className="mb-6">
-          <Link href="/" className="text-rose-200 hover:text-white text-sm underline">← Zurück</Link>
+          <Link href="/biomes/biology" className="text-rose-200 hover:text-white text-sm underline">← Zurück</Link>
         </div>
         
         <div className="bg-gradient-to-r from-rose-100 to-pink-100 border-2 border-rose-400 rounded-2xl p-4 mb-6">

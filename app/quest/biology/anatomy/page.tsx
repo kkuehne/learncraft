@@ -7,7 +7,7 @@ export default function AnatomyRedirect() {
   const router = useRouter()
   
   useEffect(() => {
-    router.replace('/quest/forelle/anatomy-lab')
+    router.replace('/quest/biology/anatomy-lab')
   }, [router])
   
   return (

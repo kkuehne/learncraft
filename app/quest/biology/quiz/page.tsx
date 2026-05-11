@@ -61,7 +61,7 @@ export default function QuizPage() {
         <div className="max-w-2xl mx-auto space-y-6">
           
           {/* Bronze - Immer verfügbar */}
-          <Link href="/quest/forelle/bronze">
+          <Link href="/quest/biology/bronze">
             <div className={`bg-gradient-to-r from-yellow-100 to-yellow-50 border-2 rounded-xl p-6 hover:shadow-xl transition-all cursor-pointer ${bronzeDone ? 'border-yellow-400 opacity-70' : 'border-yellow-400'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -159,7 +159,7 @@ export default function QuizPage() {
 
         {/* Zurück Button */}
         <div className="mt-12 text-center">
-          <Link href="/">
+          <Link href="/biomes/biology">
             <button className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-colors">
               ← Zurück zum Lernpfad
             </button>

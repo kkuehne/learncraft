@@ -39,7 +39,7 @@ export default function BronzeLevel() {
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-bold text-green-800 mb-4">Bronze-Level geschafft!</h1>
           <p className="text-green-700 mb-6">Du hast {level.totalXP} XP verdient!</p>
-          <Link href="/quiz" className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700">
+          <Link href="/quest/biology/quiz" className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700">
             <Check size={20} />
             Zurück zur Übersicht
           </Link>
@@ -53,7 +53,7 @@ export default function BronzeLevel() {
       <XPBar />
       
       <div className="mb-6">
-        <Link href="/" className="text-blue-600 hover:underline">← Zurück</Link>
+        <Link href="/biomes/biology" className="text-blue-600 hover:underline">← Zurück</Link>
       </div>
       
       <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 border-2 border-yellow-400 rounded-xl p-4 mb-6">

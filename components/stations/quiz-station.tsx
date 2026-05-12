@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getBiomeById } from '@/lib/biomes'
 import { professorEich } from '@/lib/biomes/biology'
+import { professorLumen } from '@/lib/biomes/religion'
 import { addXP } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X } from 'lucide-react'
@@ -19,11 +21,32 @@ interface QuizProps {
   biomeId?: string
 }
 
-export default function QuizStation({ task, onComplete }: QuizProps) {
+export default function QuizStation({ task: initialTask, onComplete, biomeId }: QuizProps) {
+  const [task, setTask] = useState(initialTask)
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   
+  useEffect(() => {
+    if (!biomeId) return
+    const biome = getBiomeById(biomeId)
+    if (biome && biome.quest && biome.quest.levels) {
+      // This is a simplified logic to get a task. 
+      // In a real scenario, we might track the current level (bronze, silver, gold).
+      // For the MVP, we'll iterate through all levels combined.
+      const allTasks = [
+        ...(biome.quest.levels.bronze?.tasks || []),
+        ...(biome.quest.levels.silver?.tasks || []),
+        ...(biome.quest.levels.gold?.tasks || [])
+      ]
+      
+      if (allTasks.length > 0) {
+        setTask(allTasks[currentTaskIndex] || allTasks[0])
+      }
+    }
+  }, [biomeId, currentTaskIndex])
+
   // Reset states when task changes
   useEffect(() => {
     setSelected(null)
@@ -41,22 +64,26 @@ export default function QuizStation({ task, onComplete }: QuizProps) {
     
     if (correct) {
       addXP(task.xp, task.id)
-      // Audio: Erklärung statt nur "Richtig!"
-      const explanation = task.hint || getRandomResponse(professorEich.correct)
+      
+      const expert = biomeId === 'religion' ? professorLumen : professorEich
+      const explanation = task.hint || getRandomResponse(expert.correct)
       speak(explanation)
     } else {
-      speak(getRandomResponse(professorEich.wrong))
+      const expert = biomeId === 'religion' ? professorLumen : professorEich
+      speak(getRandomResponse(expert.wrong))
     }
     
     setTimeout(() => {
       onComplete?.(correct)
       if (!correct) {
-        // Reset bei falscher Antwort für neuen Versuch
         setSelected(null)
         setShowResult(false)
         setIsCorrect(false)
+      } else if (task) {
+        // Move to next task if correct
+        setCurrentTaskIndex(prev => prev + 1)
       }
-    }, correct && task.hint ? 3500 : 1500) // Längere Pause bei Erklärung
+    }, correct && task.hint ? 3500 : 1500)
   }
   
   if (!task) return <div className="text-center p-10">Lade Aufgabe...</div>
@@ -65,9 +92,9 @@ export default function QuizStation({ task, onComplete }: QuizProps) {
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
-          <span className="text-4xl">🦫</span>
+          <span className="text-4xl">{biomeId === 'religion' ? '📖' : '🦫'}</span>
           <div>
-            <p className="font-bold text-amber-800">Professor Eich</p>
+            <p className="font-bold text-amber-800">{biomeId === 'religion' ? 'Professor Lumen' : 'Professor Eich'}</p>
             <p className="text-gray-700">{task.question}</p>
           </div>
         </div>

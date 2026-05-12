@@ -1,4 +1,19 @@
 // Religion-Biome Daten (Altes Testament)
+export const professorLumen = {
+  correct: [
+    'Hervorragend! Das ist eine tiefe und richtige Erkenntnis.',
+    'Ganz genau! Du hast den Kern der biblischen Botschaft erfasst.',
+    'Ausgezeichnet! So ist es in den Schriften geschrieben.',
+    'Richtig! Dein Verständnis der heiligen Texte wächst stetig.'
+  ],
+  wrong: [
+    'Nicht ganz. Schau noch einmal in die Verse...',
+    'Leider nicht korrekt. Aber aus dem Suchen lernt man!',
+    'Das war noch nicht ganz richtig. Lass uns den Hinweis betrachten.',
+    'Huch, da hast du dich vertan. Versuch es noch einmal mit Gottes Segen!'
+  ]
+}
+
 export const religionBiome = {
   id: 'religion',
   name: 'Religion',
@@ -68,21 +83,21 @@ export const religionBiome = {
         id: 'schöpfung',
         title: 'Die Schöpfungs-Werkstatt',
         emoji: '🌍',
-        description: 'Wie entstand die Welt in 7 Tagen?',
+        description: 'Psalm 104 & Marduk: Gott vs. Babylon',
         xp: 40
+      },
+      {
+        id: 'kirchenjahr',
+        title: 'Der Jahreskreis',
+        emoji: '⛪',
+        description: 'Von Advent bis Ostern: Die großen Feste',
+        xp: 35
       },
       {
         id: 'bund',
         title: 'Der Bund-Generator',
         emoji: '🤝',
         description: 'Das Versprechen zwischen Gott und Mensch',
-        xp: 35
-      },
-      {
-        id: 'exodus',
-        title: 'Exodus-Navigator',
-        emoji: '📜',
-        description: 'Von Ägypten zu den 10 Geboten',
         xp: 35
       },
       {

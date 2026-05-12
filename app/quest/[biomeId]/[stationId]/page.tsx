@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation'
 import TrainingCamp from '@/components/stations/training-camp'
 import AnatomyLab from '@/components/stations/anatomy-lab'
 import PhysiologyLab from '@/components/stations/physiology-lab'
+import TheologyLab from '@/components/stations/theology-lab'
 import QuizStation from '@/components/stations/quiz-station'
 import BossArena from '@/components/stations/boss-arena'
 
@@ -41,7 +42,7 @@ export default function DynamicQuestPage() {
         return <PhysiologyLab biomeId={biomeId as string} />
       
       case 'theology-lab':
-        return <PhysiologyLab biomeId={biomeId as string} isTheology />
+        return <TheologyLab biomeId={biomeId as string} />
       
       case 'quiz':
       case 'religion-quiz':

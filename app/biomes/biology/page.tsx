@@ -16,7 +16,7 @@ export default function BiologyBiomePage() {
   
   useEffect(() => {
     const data = getUserData()
-    setUserXP(data.xp)
+    setUserXP(data.xp.biology || 0)
     setCompletedLevels(data.completedLevels)
     setMounted(true)
   }, [])

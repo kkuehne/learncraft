@@ -19,10 +19,11 @@ export default function BiomePage() {
   
   useEffect(() => {
     const data = getUserData()
-    setUserXP(data.xp)
+    const currentBiomeXP = data.xp[biomeId] || 0
+    setUserXP(currentBiomeXP)
     setCompletedLevels(data.completedLevels)
     setMounted(true)
-  }, [])
+  }, [biomeId])
   
   if (!mounted || !biome) {
     return (

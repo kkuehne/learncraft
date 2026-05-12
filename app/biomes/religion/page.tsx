@@ -16,7 +16,7 @@ export default function ReligionBiomePage() {
   
   useEffect(() => {
     const data = getUserData()
-    setUserXP(data.xp)
+    setUserXP(data.xp.religion || 0)
     setCompletedLevels(data.completedLevels)
     setMounted(true)
   }, [])

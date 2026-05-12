@@ -1,15 +1,13 @@
-'use client'
-
 import { useState, useEffect } from 'react'
-import { getUserData, getProgress, getLevel } from '@/lib/xp'
+import { getUserData, getProgress, getLevel, getTotalXP } from '@/lib/xp'
 
 export function XPBar() {
   const [mounted, setMounted] = useState(false)
-  const [userData, setUserData] = useState({ xp: 0 })
+  const [userXP, setUserXP] = useState(0)
   
   useEffect(() => {
     setMounted(true)
-    setUserData(getUserData())
+    setUserXP(getTotalXP())
   }, [])
   
   // Verhindere Hydration-Mismatch
@@ -27,8 +25,8 @@ export function XPBar() {
     )
   }
   
-  const progress = getProgress(userData.xp)
-  const level = getLevel(userData.xp)
+  const progress = getProgress(userXP)
+  const level = getLevel(userXP)
   
   const levelColors = {
     bronze: 'bg-yellow-700',
@@ -43,7 +41,7 @@ export function XPBar() {
     <div className="bg-white rounded-lg shadow-md p-4 mb-4">
       <div className="flex items-center justify-between mb-2">
         <span className="font-bold text-gray-800">Level: {level.toUpperCase()}</span>
-        <span className="text-sm text-gray-600">{userData.xp} XP</span>
+        <span className="text-sm text-gray-600">{userXP} XP</span>
       </div>
       
       <div className="w-full bg-gray-200 rounded-full h-4">

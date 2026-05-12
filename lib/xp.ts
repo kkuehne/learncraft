@@ -3,7 +3,7 @@
 const STORAGE_KEY = 'learncraft-user'
 
 export interface UserData {
-  xp: number
+  xp: Record<string, number>
   completedTasks: string[]
   completedLevels: ('bronze' | 'silver' | 'gold' | 'anatomy' | 'innerorgans' | 'gegenstrom' | 'temperatur' | 'fortpflanzung' | 'wild-vs-zucht' | 'boss')[]
   labeledParts?: {
@@ -19,15 +19,20 @@ export interface UserData {
 
 export function getUserData(): UserData {
   if (typeof window === 'undefined') {
-    return { xp: 0, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
+    return { xp: { biology: 0, religion: 0 }, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
   }
   
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored) {
-    return JSON.parse(stored)
+    const parsed = JSON.parse(stored)
+    // Migration for old XP format (number -> object)
+    if (typeof parsed.xp === 'number') {
+      parsed.xp = { biology: parsed.xp, religion: 0 }
+    }
+    return parsed
   }
   
-  return { xp: 0, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
+  return { xp: { biology: 0, religion: 0 }, completedTasks: [], completedLevels: [], labeledParts: { anatomy: [], innerOrgans: [] } }
 }
 
 export function saveUserData(data: UserData): void {
@@ -35,22 +40,22 @@ export function saveUserData(data: UserData): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 }
 
-export function addXP(amount: number, taskId: string): { newXP: number; levelUp: boolean } {
+export function addXP(amount: number, taskId: string, biomeId: string = 'biology'): { newXP: number; levelUp: boolean } {
   const user = getUserData()
   
   if (user.completedTasks.includes(taskId)) {
-    return { newXP: user.xp, levelUp: false }
+    return { newXP: user.xp[biomeId] || 0, levelUp: false }
   }
   
-  const oldLevel = getLevel(user.xp)
-  user.xp += amount
+  const oldLevel = getLevel(user.xp[biomeId] || 0)
+  user.xp[biomeId] = (user.xp[biomeId] || 0) + amount
   user.completedTasks.push(taskId)
-  const newLevel = getLevel(user.xp)
+  const newLevel = getLevel(user.xp[biomeId] || 0)
   
   saveUserData(user)
   
   return { 
-    newXP: user.xp, 
+    newXP: user.xp[biomeId] || 0, 
     levelUp: newLevel !== oldLevel 
   }
 }
@@ -115,5 +120,6 @@ export function resetProgress(): void {
 }
 
 export function getTotalXP(): number {
-  return getUserData().xp
+  const user = getUserData()
+  return Object.values(user.xp).reduce((sum, val) => sum + val, 0)
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { religionQuest } from '@/lib/religion-data'
-import { QuizComponent } from '@/components/quiz-component'
+import { QuizComponent } from '@/components/stations/quiz-component'
 
 interface BundQuizProps {
   onComplete: (passed: boolean) => void

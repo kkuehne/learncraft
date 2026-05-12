@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { BundQuiz } from '@/components/bund-quiz'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface BundModuleProps {
   onComplete: () => void

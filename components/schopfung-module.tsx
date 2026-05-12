@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { SchopfungQuiz } from '@/components/schopfung-quiz'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface SchopfungModuleProps {
   onComplete: () => void

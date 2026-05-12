@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Volume2 } from 'lucide-react'
 import { speak, stopSpeaking } from '@/lib/speech'
-import { professorEich } from '@/lib/data'
+import { professorEich } from '@/lib/biomes/biology'
 
 interface DetailedGillProps {
   isOpen: boolean

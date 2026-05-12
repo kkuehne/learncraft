@@ -1,4 +1,19 @@
 // Biologie-Biome Daten (Bachforelle)
+export const professorEich = {
+  correct: [
+    'Hervorragend! Das ist absolut richtig!',
+    'Ganz genau! Du hast den Kern der Sache erfasst.',
+    'Ausgezeichnet! Genau so ist es.',
+    'Richtig! Dein Wissen über die Forelle wächst stetig.'
+  ],
+  wrong: [
+    'Nicht ganz. Überleg noch einmal kurz...',
+    'Leider falsch. Aber aus Fehlern lernt man!',
+    'Das war nicht ganz korrekt. Schau dir den Hinweis an.',
+    'Huch, da hast du dich vertan. Versuch es noch einmal!'
+  ]
+}
+
 export const biologyBiome = {
   id: 'biology',
   name: 'Biologie',
@@ -314,7 +329,7 @@ export const biologyBiome = {
             question: 'Warum ist die Forelle ein Bioindikator?',
             options: ['Zeigt Wassergüte an', 'Ist sehr groß', 'Lebt sehr lange'],
             correctAnswer: 0,
-            hint: 'Verschwindet bei schlechtem Wasser',
+            hint: 'Verschwindend bei schlechtem Wasser',
             xp: 30
           }
         ]
@@ -337,8 +352,8 @@ export const biologyBiome = {
           },
           {
             id: 'boss2',
-            question: 'Warum kann die Forelle als "Physostomer" Gas direkt aus dem Darm in die Schwimmblase pumpen?',
-            options: ['Um schneller zu schwimmen', 'Um in verschiedenen Tiefen zu bleiben', 'Um lauter zu sein', 'Um besser zu riechen'],
+            question: 'Warum kann die Forelle als \"Physostomer\" Gas direkt aus dem Darm in die Schwimmblase pumpen?',
+            options: ['Um schneller schwimmen', 'Um in verschiedenen Tiefen zu bleiben', 'Um lauter zu sein', 'Um besser zu riechen'],
             correctAnswer: 1,
             hint: 'Sie reguliert damit ihren Auftrieb!',
             xp: 50
@@ -356,3 +371,5 @@ export const biologyBiome = {
     }
   }
 }
+
+export const forelleInnerOrgans = biologyBiome.innerOrgans;

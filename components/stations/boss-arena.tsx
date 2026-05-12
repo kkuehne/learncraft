@@ -21,8 +21,9 @@ import {
   Info
 } from 'lucide-react'
 import Link from 'next/link'
+import { getBiomeById } from '@/lib/biomes'
 
-export function BossChallengeComponent() {
+export default function BossArena({ biomeId }: { biomeId: string }) {
   const [currentChallenge, setCurrentChallenge] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [attempts, setAttempts] = useState<Record<string, AttemptResult[]>>({})
@@ -32,6 +33,9 @@ export function BossChallengeComponent() {
   const [totalScore, setTotalScore] = useState(0)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const biome = getBiomeById(biomeId)
+  if (!biome) return <div className="text-white text-center py-20">Biome not found</div>
+
   const challenge = bossChallenges[currentChallenge]
   const currentAnswer = answers[challenge.id] || ''
   const currentAttempts = attempts[challenge.id] || []
@@ -40,15 +44,9 @@ export function BossChallengeComponent() {
   const maxAttempts = challenge.maxAttempts
   const attemptsLeft = maxAttempts - attemptCount
   
-  // KORREKTE Logik: Weitere Versuche erlaubt, solange:
-  // 1. Noch nicht alle Versuche aufgebraucht
-  // 2. Noch nicht "Exzellent" (85+) erreicht
   const canRetry = attemptsLeft > 0 && (!lastResult || lastResult.score < 85)
-  
-  // Musterlösung anzeigen nach allen Versuchen oder bei Erfolg
   const showSolution = lastResult && (lastResult.score >= 85 || attemptsLeft === 0)
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
@@ -69,17 +67,14 @@ export function BossChallengeComponent() {
       currentAttempts
     )
     
-    // Speichere Versuch
     const newAttempts = [...currentAttempts, result]
     setAttempts(prev => ({ ...prev, [challenge.id]: newAttempts }))
     
-    // XP nur beim ersten Versuch
     if (attemptCount === 0) {
       const xpEarned = Math.round((result.score / 100) * challenge.xp)
       addXP(xpEarned, `boss-${challenge.id}`)
     }
     
-    // Vergleiche mit vorherigem Versuch
     let feedbackMessage = result.feedback
     if (currentAttempts.length > 0) {
       const comparison = compareAttempts(currentAttempts[currentAttempts.length - 1], result)
@@ -88,19 +83,16 @@ export function BossChallengeComponent() {
       }
     }
     
-    // Audio Feedback
     setTimeout(() => {
       speak(feedbackMessage)
     }, 300)
 
-    // Update total score (nur beste pro Challenge zählt)
     const bestSoFar = newAttempts.reduce((best, a) => a.score > best.score ? a : best, result)
     setTotalScore(prev => prev - (currentAttempts.length > 0 ? Math.max(...currentAttempts.map(a => a.score)) : 0) + bestSoFar.score)
   }
 
   const handleRetry = () => {
     if (lastResult) {
-      // Text vom letzten Versuch laden
       setAnswers(prev => ({ ...prev, [challenge.id]: lastResult.text }))
       setShowingSolution(false)
       setTimeout(() => {
@@ -118,7 +110,6 @@ export function BossChallengeComponent() {
       setShowingSolution(false)
       setShowHints({})
     } else {
-      // Alle Challenges abgeschlossen
       const allAttempts = Object.values(attempts).flat()
       const averageScore = allAttempts.length > 0 
         ? allAttempts.reduce((sum, a) => sum + a.score, 0) / allAttempts.length 
@@ -151,21 +142,19 @@ export function BossChallengeComponent() {
     setAnswers(prev => ({ ...prev, [challenge.id]: text }))
   }
 
-  // Beste Bewertung für diese Challenge
   const bestResult = currentAttempts.length > 0 
     ? currentAttempts.reduce((best, current) => current.score > best.score ? current : best)
     : null
 
   if (allCompleted) {
-    return <BossCompletionScreen totalScore={totalScore} attempts={attempts} />
+    return <BossCompletionScreen totalScore={totalScore} attempts={attempts} biomeId={biomeId} />
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
-          <Link href="/">
+          <Link href={`/biomes/${biomeId}`}>
             <button className="flex items-center gap-2 text-purple-200 hover:text-white transition-colors mb-4">
               <ChevronLeft size={24} />
               <span>Zurück zum Lernpfad</span>
@@ -182,7 +171,6 @@ export function BossChallengeComponent() {
             </div>
           </div>
           
-          {/* Fortschrittsbalken */}
           <div className="mt-4 bg-white/10 rounded-full h-3 overflow-hidden">
             <div 
               className="bg-gradient-to-r from-yellow-400 to-orange-500 h-full transition-all duration-500"
@@ -191,25 +179,20 @@ export function BossChallengeComponent() {
           </div>
         </div>
 
-        {/* Challenge Card */}
         <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-purple-500/30">
-          {/* Titel */}
           <h2 className="text-2xl font-bold text-white mb-4">{challenge.title}</h2>
           
-          {/* Frage */}
           <div className="bg-purple-800/50 rounded-2xl p-6 mb-6">
             <p className="text-white whitespace-pre-line leading-relaxed text-lg">
               {challenge.question}
             </p>
           </div>
           
-          {/* Kontext */}
           <div className="bg-blue-800/30 rounded-xl p-4 mb-6 flex items-start gap-3">
             <BookOpen className="text-blue-300 flex-shrink-0 mt-1" size={20} />
             <p className="text-blue-100 text-sm">{challenge.context}</p>
           </div>
 
-          {/* Lernziele */}
           <div className="mb-6">
             <h3 className="text-purple-200 font-semibold mb-2 flex items-center gap-2">
               <Sparkles size={18} />
@@ -225,10 +208,8 @@ export function BossChallengeComponent() {
             </ul>
           </div>
 
-          {/* Eingabebereich */}
           {(!lastResult || (canRetry && !showingSolution)) ? (
             <div className="space-y-4">
-              {/* Versuch-Anzeige */}
               {attemptCount > 0 && (
                 <div className="bg-purple-800/50 rounded-xl p-4 flex items-center justify-between">
                   <span className="text-purple-200">
@@ -253,7 +234,6 @@ export function BossChallengeComponent() {
                 </div>
               </div>
 
-              {/* Hinweise */}
               <div className="bg-amber-900/30 rounded-xl p-4">
                 <h4 className="text-amber-200 font-semibold mb-3 flex items-center gap-2">
                   <Lightbulb size={18} />
@@ -272,7 +252,6 @@ export function BossChallengeComponent() {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 onClick={handleSubmit}
                 disabled={currentAnswer.length < 100}
@@ -284,7 +263,6 @@ export function BossChallengeComponent() {
             </div>
           ) : null}
 
-          {/* Ergebnisanzeige */}
           {lastResult && (
             <div className={`mt-6 rounded-2xl p-6 border-2 ${
               lastResult.score >= 85 ? 'bg-green-900/30 border-green-500' :
@@ -311,7 +289,6 @@ export function BossChallengeComponent() {
 
               <p className="text-white mb-4">{lastResult.feedback}</p>
 
-              {/* Verbesserungsvorschläge */}
               <div className="space-y-2">
                 <h4 className="text-purple-200 font-semibold flex items-center gap-2">
                   <TrendingUp size={18} />
@@ -327,7 +304,6 @@ export function BossChallengeComponent() {
                 </ul>
               </div>
 
-              {/* Neue Keywords anzeigen */}
               {currentAttempts.length > 1 && (
                 <div className="mt-4 pt-4 border-t border-white/10">
                   <p className="text-green-400 text-sm">
@@ -336,7 +312,6 @@ export function BossChallengeComponent() {
                 </div>
               )}
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap gap-4 mt-6">
                 {canRetry && (
                   <button
@@ -362,7 +337,6 @@ export function BossChallengeComponent() {
             </div>
           )}
 
-          {/* Musterlösung */}
           {showSolution && (
             <div className="mt-6 bg-gradient-to-br from-emerald-900/50 to-teal-900/50 rounded-2xl p-6 border border-emerald-500/50">
               <div className="flex items-center gap-3 mb-4">
@@ -386,7 +360,6 @@ export function BossChallengeComponent() {
             </div>
           )}
 
-          {/* Bestes Ergebnis anzeigen */}
           {bestResult && currentAttempts.length > 1 && (
             <div className="mt-4 bg-purple-800/30 rounded-xl p-4 flex items-center justify-between">
               <span className="text-purple-200">Dein bestes Ergebnis:</span>
@@ -405,7 +378,6 @@ export function BossChallengeComponent() {
   )
 }
 
-// Musterlösungen für jede Challenge
 const solutions: Record<string, { title: string; points: string[] }> = {
   bioindikator: {
     title: 'Die Forelle als Bioindikator - Musterlösung',
@@ -459,13 +431,14 @@ function getSolutionText(challengeId: string): string {
   return `${solution.title}. ${solution.points.join(' ')}`
 }
 
-// Abschluss-Screen
 function BossCompletionScreen({ 
   totalScore, 
-  attempts 
+  attempts,
+  biomeId
 }: { 
   totalScore: number
   attempts: Record<string, AttemptResult[]>
+  biomeId: string
 }) {
   const allAttempts = Object.values(attempts).flat()
   const averageScore = allAttempts.length > 0 
@@ -497,7 +470,6 @@ function BossCompletionScreen({
               : `Du hast alle Challenges bearbeitet. Für das Boss-Abzeichen brauchst du 50%. Dein Durchschnitt: ${Math.round(averageScore)}%. Versuche es gerne nochmal!`}
           </p>
 
-          {/* Versuchs-Statistik */}
           <div className="bg-white/20 rounded-xl p-4 mb-6">
             <h3 className={`font-bold mb-3 ${passed ? 'text-yellow-800' : 'text-white'}`}>
               Deine Versuche:
@@ -524,7 +496,7 @@ function BossCompletionScreen({
 
           <div className="flex gap-4">
             <Link 
-              href="/" 
+              href={`/biomes/${biomeId}`} 
               className={`flex-1 py-3 rounded-xl font-bold transition-colors ${
                 passed 
                   ? 'bg-yellow-600 hover:bg-yellow-700 text-white' 
@@ -535,7 +507,7 @@ function BossCompletionScreen({
             </Link>
             {!passed && (
               <Link 
-                href="/quest/forelle/boss" 
+                href={`/quest/${biomeId}/boss`} 
                 className="flex-1 py-3 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white"
                 onClick={() => window.location.reload()}
               >

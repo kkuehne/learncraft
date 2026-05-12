@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { forelleAnatomy, professorEich } from '@/lib/data'
+import { biologyBiome, professorEich } from '@/lib/biomes/biology'
+
 import { addXP, getLabeledParts, saveLabeledParts, getUserData } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, AlertCircle } from 'lucide-react'
 
 interface AnatomyLabProps {
-  onComplete: (success: boolean) => void
+  onComplete?: (success: boolean) => void
 }
 
 function normalizeText(text: string): string {
@@ -53,7 +54,7 @@ function checkAnswer(userInput: string, correctAnswer: string): {
   }
 }
 
-export function AnatomyLab({ onComplete }: AnatomyLabProps) {
+export default function AnatomyLab({ onComplete, biomeId }: AnatomyLabProps & { biomeId: string }) {
   const [labeledParts, setLabeledParts] = useState<string[]>([])
   const [selectedPart, setSelectedPart] = useState<string | null>(null)
   const [showHint, setShowHint] = useState<string | null>(null)
@@ -76,7 +77,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
     setLabeledParts(savedParts)
   }, [])
   
-  const parts = forelleAnatomy.parts
+  const parts = biologyBiome.anatomy.parts
   const progress = (labeledParts.length / parts.length) * 100
   
   // Completion check - only if not already completed
@@ -88,7 +89,7 @@ export function AnatomyLab({ onComplete }: AnatomyLabProps) {
       setJustCompleted(true)
       setTimeout(() => {
         speak('Hervorragend! Du hast alle Teile der Forelle beschriftet!')
-        onComplete(true)
+        onComplete?.(true)
       }, 1000)
     }
   }, [labeledParts, parts.length, justCompleted, onComplete, alreadyCompleted])

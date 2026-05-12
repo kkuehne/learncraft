@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ChevronLeft, Fish, Microscope, Scroll, Crown } from 'lucide-react'
-import { learningPath } from '@/lib/data'
+import { biologyBiome } from '@/lib/biomes/biology'
 import { getUserData, getTotalXP } from '@/lib/xp'
 
 type StationId = 'training-camp' | 'anatomy-lab' | 'physiology-lab' | 'quiz' | 'boss-arena'
@@ -42,7 +42,7 @@ export default function BiologyBiomePage() {
   }
 
   const isStationCompleted = (id: string) => completedLevels.includes(id)
-  const isStationLocked = (station: typeof learningPath.stations[0]) => {
+  const isStationLocked = (station: typeof biologyBiome.learningPath.stations[0]) => {
     if (!station.requiredXP) return false
     return userXP < station.requiredXP
   }
@@ -100,7 +100,7 @@ export default function BiologyBiomePage() {
 
         {/* Learning Path Stations */}
         <div className="max-w-2xl mx-auto space-y-4">
-          {learningPath.stations.map((station, index) => {
+          {biologyBiome.learningPath.stations.map((station, index) => {
             const completed = isStationCompleted(station.id)
             const locked = isStationLocked(station)
             

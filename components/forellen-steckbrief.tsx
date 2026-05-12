@@ -5,7 +5,7 @@ import { forellenSteckbrief } from '@/lib/training-camp'
 import { speak } from '@/lib/speech'
 import { MapPin, Ruler, Scale, Clock, Users, CheckCircle, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface ForellenSteckbriefProps {
   onComplete: (earnedXP: number) => void

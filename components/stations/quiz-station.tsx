@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { professorEich } from '@/lib/data'
+import { professorEich } from '@/lib/biomes/biology'
 import { addXP } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X } from 'lucide-react'
 
 interface QuizProps {
-  task: {
+  task?: {
     id: string
     question: string
     options: string[]
@@ -15,10 +15,11 @@ interface QuizProps {
     hint?: string
     xp: number
   }
-  onComplete: (success: boolean) => void
+  onComplete?: (success: boolean) => void
+  biomeId?: string
 }
 
-export function Quiz({ task, onComplete }: QuizProps) {
+export default function QuizStation({ task, onComplete }: QuizProps) {
   const [selected, setSelected] = useState<number | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
@@ -28,10 +29,10 @@ export function Quiz({ task, onComplete }: QuizProps) {
     setSelected(null)
     setShowResult(false)
     setIsCorrect(false)
-  }, [task.id])
+  }, [task?.id])
   
   const handleAnswer = (index: number) => {
-    if (showResult) return
+    if (showResult || !task) return
     
     setSelected(index)
     const correct = index === task.correctAnswer
@@ -48,7 +49,7 @@ export function Quiz({ task, onComplete }: QuizProps) {
     }
     
     setTimeout(() => {
-      onComplete(correct)
+      onComplete?.(correct)
       if (!correct) {
         // Reset bei falscher Antwort für neuen Versuch
         setSelected(null)
@@ -58,6 +59,8 @@ export function Quiz({ task, onComplete }: QuizProps) {
     }, correct && task.hint ? 3500 : 1500) // Längere Pause bei Erklärung
   }
   
+  if (!task) return <div className="text-center p-10">Lade Aufgabe...</div>
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 mb-6">

@@ -5,7 +5,7 @@ import { matchGame } from '@/lib/training-camp'
 import { speak } from '@/lib/speech'
 import { Check, X, RotateCcw, Trophy, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface MatchGameProps {
   onComplete: (earnedXP: number) => void

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ProphetenQuiz } from '@/components/propheten-quiz'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface ProphetenModuleProps {
   onComplete: () => void

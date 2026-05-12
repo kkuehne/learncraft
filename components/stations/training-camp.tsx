@@ -5,15 +5,17 @@ import { HabitatTour } from '@/components/habitat-tour'
 import { KnowledgeSnippets } from '@/components/knowledge-snippets'
 import { MatchLearn } from '@/components/match-learn'
 import { addXP } from '@/lib/xp'
-import { trainingCampData } from '@/lib/training-camp'
+import { getBiomeById } from '@/lib/biomes'
 import { ForellenSteckbrief } from '@/components/forellen-steckbrief'
 import { Map, BookOpen, Puzzle, FileText, ChevronLeft, CheckCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 type TabId = 'habitat' | 'snippets' | 'match' | 'steckbrief'
 
-export default function TrainingCampPage() {
+export default function TrainingCamp({ biomeId }: { biomeId: string }) {
+  const biome = getBiomeById(biomeId)
   const [activeTab, setActiveTab] = useState<TabId>('habitat')
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set())
   const [totalXP, setTotalXP] = useState(0)
@@ -22,7 +24,7 @@ export default function TrainingCampPage() {
     if (!completedActivities.has(activityId)) {
       setCompletedActivities(prev => new Set([...prev, activityId]))
       setTotalXP(prev => prev + xp)
-      addXP(xp, `training-camp-${activityId}`)
+      addXP(xp, `${biomeId}-training-camp-${activityId}`)
     }
   }
 
@@ -63,6 +65,8 @@ export default function TrainingCampPage() {
     },
   ]
 
+  if (!biome) return <div>Biome not found</div>
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-900 via-emerald-900 to-teal-900 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
@@ -72,7 +76,7 @@ export default function TrainingCampPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <Link href="/biomes/biology">
+          <Link href={`/biomes/${biomeId}`}>
             <button className="flex items-center gap-2 text-emerald-200 hover:text-white transition-colors mb-4">
               <ChevronLeft className="w-5 h-5" />
               Zurück zum Lernpfad
@@ -81,10 +85,10 @@ export default function TrainingCampPage() {
           
           <div className="text-6xl mb-4">🏕️</div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            {trainingCampData.name}
+            {biome.learningPath.stations.find((s: any) => s.id === 'training-camp')?.name || 'Training Camp'}
           </h1>
           <p className="text-emerald-200 max-w-2xl mx-auto">
-            {trainingCampData.description}
+            {biome.learningPath.stations.find((s: any) => s.id === 'training-camp')?.description}
           </p>
           
           {/* XP Progress */}
@@ -167,7 +171,7 @@ export default function TrainingCampPage() {
             <div className="text-5xl mb-3">🎓</div>
             <h2 className="text-2xl font-bold mb-2">Training Camp gemeistert!</h2>
             <p className="mb-4">Du bist bereit für die nächsten Stationen!</p>
-            <Link href="/biomes/biology">
+            <Link href={`/biomes/${biomeId}`}>
               <button className="bg-white text-orange-600 font-bold py-3 px-8 rounded-full hover:scale-105 transition-transform">
                 Weiter zum Lernpfad →
               </button>

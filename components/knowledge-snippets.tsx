@@ -5,7 +5,7 @@ import { knowledgeSnippets } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
 import { Play, Square, Clock, ChevronRight, ChevronLeft, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface KnowledgeSnippetsProps {
   onComplete: (earnedXP: number) => void

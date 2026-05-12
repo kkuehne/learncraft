@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { learningPath } from '@/lib/data'
+import { biologyBiome } from '@/lib/biomes/biology'
 import { getTotalXP } from '@/lib/xp'
 import { Lock, CheckCircle, ChevronRight, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -18,8 +18,8 @@ export function LearningPath({ onSelectStation, currentStation }: LearningPathPr
     setUserXP(getTotalXP())
   }, [])
 
-  const getStationStatus = (station: typeof learningPath.stations[0], index: number) => {
-    const prevStation = learningPath.stations[index - 1]
+  const getStationStatus = (station: typeof biologyBiome.learningPath.stations[0], index: number) => {
+    const prevStation = biologyBiome.learningPath.stations[index - 1]
     const isCompleted = userXP >= station.requiredXP + station.totalXP
     const isUnlocked = userXP >= station.requiredXP
     const isCurrent = currentStation === station.id
@@ -51,7 +51,7 @@ export function LearningPath({ onSelectStation, currentStation }: LearningPathPr
           
           {/* Stations */}
           <div className="space-y-8 relative">
-            {learningPath.stations.map((station, index) => {
+            {biologyBiome.learningPath.stations.map((station, index) => {
               const { isCompleted, isUnlocked, isCurrent } = getStationStatus(station, index)
               const isEven = index % 2 === 0
               

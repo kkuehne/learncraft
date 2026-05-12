@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { forelleInnerOrgans, professorEich } from '@/lib/data'
+import { forelleInnerOrgans, professorEich } from '@/lib/biomes/biology'
 import { addXP, getLabeledParts, saveLabeledParts, getUserData } from '@/lib/xp'
 import { speak, getRandomResponse } from '@/lib/speech'
 import { Check, X, HelpCircle, Play, Pause } from 'lucide-react'

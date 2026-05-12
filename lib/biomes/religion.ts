@@ -231,7 +231,7 @@ export const religionBiome = {
             options: ['Strenge Strafen', 'Die Würde und das Recht des Mitmenschen zu achten', 'Nur Gehorsam gegenüber dem König'],
             correctAnswer: 1,
             hint: 'Nicht töten, nicht stehlen - das schützt alle Menschen.',
-            xp same: 50
+            xp: 50
           }
         ]
       }

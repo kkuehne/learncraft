@@ -5,7 +5,7 @@ import { habitatTour } from '@/lib/training-camp'
 import { speak, stopSpeaking } from '@/lib/speech'
 import { MapPin, Volume2, X, Info, Square } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface HabitatTourProps {
   onComplete: (earnedXP: number) => void

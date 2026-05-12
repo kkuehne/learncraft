@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ExodusQuiz } from '@/components/exodus-quiz'
-import { XPReward } from '@/components/xp-reward'
+import { XPReward } from '@/components/stations/xp-reward'
 
 interface ExodusModuleProps {
   onComplete: () => void
